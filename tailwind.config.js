@@ -1,0 +1,103 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Cormorant Garamond"', 'serif'],
+        body: ['Jost', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        cream: {
+          50: '#fdfbf7',
+          100: '#faf5ec',
+          200: '#f3e9d6',
+          300: '#ead9bd',
+        },
+        wine: {
+          50: '#fbf2f2',
+          100: '#f6e3e3',
+          200: '#ecc5c6',
+          300: '#dd9a9c',
+          400: '#c96e71',
+          500: '#ad4a4e',
+          600: '#8b2635',
+          700: '#73202d',
+          800: '#5f1d28',
+          900: '#4e1a23',
+        },
+        emerald: {
+          50: '#f2f7f3',
+          100: '#e3eee6',
+          200: '#c6ddcb',
+          300: '#97bf9f',
+          400: '#5f9b6c',
+          500: '#3a7a4a',
+          600: '#2a5d37',
+          700: '#234b2d',
+          800: '#1d3d25',
+          900: '#163020',
+        },
+        sapphire: {
+          50: '#f1f5f9',
+          100: '#e2e9f1',
+          200: '#c4d3e3',
+          300: '#94b3cd',
+          400: '#5d8bb0',
+          500: '#3a6b96',
+          600: '#2d5578',
+          700: '#264662',
+          800: '#213b53',
+          900: '#1c3146',
+        },
+        gold: {
+          50: '#fbf8ed',
+          100: '#f6efcf',
+          200: '#ecdfa0',
+          300: '#e0c96c',
+          400: '#d4b34a',
+          500: '#c9a227',
+          600: '#a8841f',
+          700: '#85661c',
+          800: '#6e531d',
+          900: '#5d461e',
+        },
+        warmgray: {
+          50: '#faf8f5',
+          100: '#f1ede6',
+          200: '#e2dccf',
+          300: '#cabfa9',
+          400: '#a89a7f',
+          500: '#877a61',
+          600: '#6b604d',
+          700: '#534a3c',
+          800: '#3a342a',
+          900: '#241f18',
+        },
+      },
+      letterSpacing: {
+        'widest-2': '0.25em',
+      },
+      animation: {
+        'fade-up': 'fadeUp 0.9s ease-out both',
+        'fade-in': 'fadeIn 1.2s ease-out both',
+        'float-slow': 'floatSlow 6s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(28px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        floatSlow: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

@@ -34,7 +34,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center px-6 py-20 max-w-4xl">
         <p className="text-gold-300 uppercase tracking-widest-2 text-sm font-body font-medium animate-fade-in">
-          {t("We're getting married", '¡Nos casamos!')}
+          {t("Come Celebrate Our Love and Marriage", 'Ven a Celebrar Nuestro amor y Nuestro Matrimonio')}
         </p>
         <h1 className="mt-6 font-display text-6xl sm:text-7xl md:text-8xl text-cream-50 font-medium leading-none animate-fade-up">
           Sunshine

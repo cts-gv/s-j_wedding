@@ -115,10 +115,23 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
       {/* Mobile menu */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-400 ${
-          menuOpen ? 'max-h-[600px] mt-3' : 'max-h-0'
+          menuOpen ? 'max-h-[720px] mt-3' : 'max-h-0'
         }`}
       >
         <nav className="bg-cream-50 rounded-2xl mx-4 shadow-xl border border-cream-200 p-4 flex flex-col gap-1">
+          {guest?.full_name && (
+            <>
+              <div className="px-4 pt-1 pb-2">
+                <p className="text-xs font-body uppercase tracking-wider text-warmgray-500">
+                  Signed in as
+                </p>
+                <p className="font-display text-lg text-wine-700 leading-tight">
+                  {guest.full_name}
+                </p>
+              </div>
+              <div className="h-px bg-cream-200 mb-1" />
+            </>
+          )}
           {NAV_LINKS.map((link) => (
             <button
               key={link.href}

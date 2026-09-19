@@ -1,5 +1,6 @@
 import { Heart, ArrowRight } from 'lucide-react';
 import { useAccess } from '@/context/AccessContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface WelcomeNoteModalProps {
   onDismiss: () => void;
@@ -7,6 +8,7 @@ interface WelcomeNoteModalProps {
 
 export function WelcomeNoteModal({ onDismiss }: WelcomeNoteModalProps) {
   const { guest } = useAccess();
+  const { t } = useLanguage();
 
   if (!guest?.welcome_note) return null;
 
@@ -22,13 +24,14 @@ export function WelcomeNoteModal({ onDismiss }: WelcomeNoteModalProps) {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Heart size={18} className="text-gold-400" fill="currentColor" />
             <span className="font-display text-lg tracking-wide">
-              A Note From Sunshine <span className="text-gold-400 font-light">&amp;</span> Jose
+              {t('A Note From', 'Un mensaje de')} Sunshine{' '}
+              <span className="text-gold-400 font-light">{t('&', 'y')}</span> Jose
             </span>
             <Heart size={18} className="text-gold-400" fill="currentColor" />
           </div>
           {guest.full_name && (
             <p className="text-gold-300 text-xs uppercase tracking-[0.2em]">
-              Dear {guest.full_name}
+              {t('Dear', 'Para')} {guest.full_name}
             </p>
           )}
         </div>
@@ -48,7 +51,7 @@ export function WelcomeNoteModal({ onDismiss }: WelcomeNoteModalProps) {
             onClick={onDismiss}
             className="mt-7 w-full bg-wine-600 hover:bg-wine-700 text-cream-50 font-body font-medium rounded-full py-3.5 transition-colors flex items-center justify-center gap-2"
           >
-            Enter the Site
+            {t('Enter the Site', 'Entrar al sitio')}
             <ArrowRight size={18} />
           </button>
         </div>

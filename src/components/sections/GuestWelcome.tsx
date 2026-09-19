@@ -1,8 +1,10 @@
 import { Heart } from 'lucide-react';
 import { useAccess } from '@/context/AccessContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export function GuestWelcome() {
   const { guest } = useAccess();
+  const { t } = useLanguage();
 
   if (!guest?.welcome_note) return null;
 
@@ -17,7 +19,7 @@ export function GuestWelcome() {
 
         {guest.full_name && (
           <p className="text-gold-300 font-body text-xs uppercase tracking-[0.25em] mb-4">
-            Dear {guest.full_name}
+            {t('Dear', 'Para')} {guest.full_name}
           </p>
         )}
 

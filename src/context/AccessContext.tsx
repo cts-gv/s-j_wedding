@@ -16,10 +16,17 @@ export interface Guest {
   welcome_note: string | null;
 }
 
+export interface UnlockResult {
+  /** English error message (used by the admin login). */
+  error: string | null;
+  /** Machine-readable reason, so the guest splash screen can show it in the guest's language. */
+  errorCode?: 'generic' | 'invalid';
+}
+
 interface AccessContextValue {
   guest: Guest | null;
   loading: boolean;
-  unlock: (code: string) => Promise<{ error: string | null }>;
+  unlock: (code: string) => Promise<UnlockResult>;
   lock: () => void;
   refreshActivity: () => void;
 }
@@ -125,14 +132,17 @@ export function AccessProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const unlock = useCallback(
-    async (code: string): Promise<{ error: string | null }> => {
+    async (code: string): Promise<UnlockResult> => {
       const { data, error } = await supabase.rpc('validate_access_code', {
         input_code: code,
       });
 
-      if (error) return { error: 'Something went wrong. Please try again.' };
+      if (error) return { error: 'Something went wrong. Please try again.', errorCode: 'generic' };
       if (!data || data.length === 0) {
-        return { error: 'That access code is not valid. Please check and try again.' };
+        return {
+          error: 'That access code is not valid. Please check and try again.',
+          errorCode: 'invalid',
+        };
       }
 
       const g = data[0] as Guest;

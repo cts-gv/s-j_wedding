@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export interface LightboxItem {
   id: string;
@@ -17,6 +18,7 @@ interface LightboxProps {
 }
 
 export function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
+  const { t } = useLanguage();
   const safeIndex = Math.max(0, Math.min(index, items.length - 1));
   const item = items[safeIndex];
 
@@ -57,7 +59,7 @@ export function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
       <button
         onClick={onClose}
         className="absolute top-4 right-4 z-30 flex items-center justify-center h-10 w-10 rounded-full bg-cream-50/10 hover:bg-cream-50/20 text-cream-50 transition-colors"
-        aria-label="Close"
+        aria-label={t('Close', 'Cerrar')}
       >
         <X size={22} />
       </button>
@@ -67,7 +69,7 @@ export function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
         <button
           onClick={goPrev}
           className="absolute left-2 sm:left-4 z-30 flex items-center justify-center h-11 w-11 rounded-full bg-cream-50/10 hover:bg-cream-50/20 text-cream-50 transition-colors"
-          aria-label="Previous"
+          aria-label={t('Previous', 'Anterior')}
         >
           <ChevronLeft size={24} />
         </button>
@@ -78,7 +80,7 @@ export function Lightbox({ items, index, onClose, onNavigate }: LightboxProps) {
         <button
           onClick={goNext}
           className="absolute right-2 sm:right-4 z-30 flex items-center justify-center h-11 w-11 rounded-full bg-cream-50/10 hover:bg-cream-50/20 text-cream-50 transition-colors"
-          aria-label="Next"
+          aria-label={t('Next', 'Siguiente')}
         >
           <ChevronRight size={24} />
         </button>

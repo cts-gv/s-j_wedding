@@ -4,6 +4,7 @@ import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
 import { useLightbox, type LightboxItem } from '@/components/Lightbox';
 import { useAccess } from '@/context/AccessContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import type { SpecialNote } from '@/types';
 
@@ -11,6 +12,7 @@ const PAGE_SIZE = 9;
 
 export function Notes() {
   const { guest } = useAccess();
+  const { t, locale } = useLanguage();
   const [notes, setNotes] = useState<SpecialNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [authorName, setAuthorName] = useState('');
@@ -63,7 +65,7 @@ export function Notes() {
     id: n.id,
     body: n.note,
     subtitle: n.author_name,
-    title: new Date(n.created_at).toLocaleDateString('en-US', {
+    title: new Date(n.created_at).toLocaleDateString(locale, {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -84,9 +86,12 @@ export function Notes() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <Reveal>
           <SectionTitle
-            eyebrow="From the Heart"
-            title="Special Notes to the Couple"
-            subtitle="Share a favorite memory, a piece of advice, or a heartfelt wish for Sunshine and Jose."
+            eyebrow={t('From the Heart', 'Desde el corazón')}
+            title={t('Special Notes to the Couple', 'Mensajes especiales para los novios')}
+            subtitle={t(
+              'Share a favorite memory, a piece of advice, or a heartfelt wish for Sunshine and Jose.',
+              'Comparte un recuerdo favorito, un consejo o un deseo de corazón para Sunshine y Jose.',
+            )}
           />
         </Reveal>
 
@@ -102,7 +107,7 @@ export function Notes() {
                 required
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
-                placeholder="Your name"
+                placeholder={t('Your name', 'Tu nombre')}
                 className="w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-wine-400 focus:ring-2 focus:ring-wine-200 transition mb-3"
               />
               <textarea
@@ -110,7 +115,7 @@ export function Notes() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={4}
-                placeholder="Write your note to Sunshine & Jose..."
+                placeholder={t('Write your note to Sunshine & Jose...', 'Escribe tu mensaje para Sunshine y Jose...')}
                 className="w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-wine-400 focus:ring-2 focus:ring-wine-200 transition resize-none"
               />
               {error && (
@@ -124,7 +129,7 @@ export function Notes() {
                 className="mt-4 flex items-center gap-2 bg-wine-600 hover:bg-wine-700 disabled:opacity-60 text-cream-50 font-body font-medium rounded-full px-6 py-2.5 text-sm transition-colors"
               >
                 {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                Send Note
+                {t('Send Note', 'Enviar mensaje')}
               </button>
             </form>
           </div>
@@ -138,7 +143,10 @@ export function Notes() {
             </div>
           ) : notes.length === 0 ? (
             <p className="text-center text-warmgray-400 font-body text-sm italic py-8">
-              No notes yet — be the first to share your well wishes.
+              {t(
+                'No notes yet — be the first to share your well wishes.',
+                'Aún no hay mensajes: sé el primero en compartir tus buenos deseos.',
+              )}
             </p>
           ) : (
             <>
@@ -162,7 +170,7 @@ export function Notes() {
                             {note.author_name}
                           </p>
                           <p className="font-body text-[11px] text-warmgray-400">
-                            {new Date(note.created_at).toLocaleDateString('en-US', {
+                            {new Date(note.created_at).toLocaleDateString(locale, {
                               month: 'long',
                               day: 'numeric',
                               year: 'numeric',
@@ -171,7 +179,7 @@ export function Notes() {
                         </div>
                       </div>
                       <span className="mt-3 text-xs font-body text-wine-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Read full note
+                        {t('Read full note', 'Leer mensaje completo')}
                       </span>
                     </button>
                   </Reveal>
@@ -187,17 +195,17 @@ export function Notes() {
                     className="flex items-center gap-1.5 text-sm font-body font-medium text-warmgray-600 hover:text-wine-700 disabled:opacity-40 disabled:pointer-events-none transition-colors"
                   >
                     <ChevronLeft size={16} />
-                    Previous
+                    {t('Previous', 'Anterior')}
                   </button>
                   <span className="text-sm font-body text-warmgray-400">
-                    Page {safePage + 1} of {totalPages}
+                    {t('Page', 'Página')} {safePage + 1} {t('of', 'de')} {totalPages}
                   </span>
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                     disabled={safePage >= totalPages - 1}
                     className="flex items-center gap-1.5 text-sm font-body font-medium text-warmgray-600 hover:text-wine-700 disabled:opacity-40 disabled:pointer-events-none transition-colors"
                   >
-                    Next
+                    {t('Next', 'Siguiente')}
                     <ChevronRight size={16} />
                   </button>
                 </div>

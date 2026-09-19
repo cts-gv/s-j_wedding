@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Heart, Loader2, KeyRound, AlertCircle } from 'lucide-react';
 import { useAccess } from '@/context/AccessContext';
-import { WEDDING_DATE_DISPLAY } from '@/constants';
+import { useLanguage } from '@/i18n/LanguageContext';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const SPLASH_BG =
   'https://images.pexels.com/photos/15313106/pexels-photo-15313106.jpeg?auto=compress&cs=tinysrgb&w=1600';
 
 export function SplashScreen() {
   const { unlock } = useAccess();
+  const { t, weddingDate } = useLanguage();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,10 +29,20 @@ export function SplashScreen() {
     if (!code.trim()) return;
     setLoading(true);
     setError(null);
-    const { error: err } = await unlock(code.trim());
+    const { error: err, errorCode } = await unlock(code.trim());
     setLoading(false);
     if (err) {
-      setError(err);
+      setError(
+        errorCode === 'invalid'
+          ? t(
+              'That access code is not valid. Please check and try again.',
+              'Ese código de acceso no es válido. Revísalo e inténtalo de nuevo.',
+            )
+          : t(
+              'Something went wrong. Please try again.',
+              'Algo salió mal. Inténtalo de nuevo.',
+            ),
+      );
     }
   }
 
@@ -46,6 +58,11 @@ export function SplashScreen() {
         <div className="absolute inset-0 bg-gradient-to-b from-warmgray-900/70 via-warmgray-900/60 to-warmgray-900/80" />
       </div>
 
+      {/* Language switch */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+        <LanguageToggle tone="light" />
+      </div>
+
       {/* Content */}
       <div className="relative z-10 w-full max-w-md px-4 sm:px-6">
         <div className="bg-cream-50/95 backdrop-blur-md rounded-3xl shadow-2xl border border-cream-200 overflow-hidden">
@@ -59,7 +76,7 @@ export function SplashScreen() {
               <Heart size={20} className="text-gold-400" fill="currentColor" />
             </div>
             <p className="text-gold-300 text-xs uppercase tracking-[0.3em]">
-              {WEDDING_DATE_DISPLAY}
+              {weddingDate}
             </p>
           </div>
 
@@ -69,10 +86,14 @@ export function SplashScreen() {
               <div className="h-14 w-14 mx-auto rounded-full bg-wine-100 flex items-center justify-center mb-4">
                 <KeyRound size={26} className="text-wine-600" />
               </div>
-              <h2 className="font-display text-2xl text-wine-700">Enter Your Invite Code</h2>
+              <h2 className="font-display text-2xl text-wine-700">
+                {t('Enter Your Invite Code', 'Ingresa tu código de invitación')}
+              </h2>
               <p className="mt-2.5 text-warmgray-500 font-body text-sm leading-relaxed">
-                We&apos;ve sent a personal access code to each guest. Enter it below
-                to view our wedding details and RSVP.
+                {t(
+                  "We've sent a personal access code to each guest. Enter it below to view our wedding details and RSVP.",
+                  'Enviamos un código de acceso personal a cada invitado. Ingrésalo aquí para ver los detalles de nuestra boda y confirmar tu asistencia.',
+                )}
               </p>
             </div>
 
@@ -80,13 +101,13 @@ export function SplashScreen() {
               <div>
                 <label className="block">
                   <span className="block text-xs font-body font-medium text-warmgray-600 mb-1.5 uppercase tracking-wide">
-                    Access Code
+                    {t('Access Code', 'Código de acceso')}
                   </span>
                   <input
                     type="text"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
-                    placeholder="e.g. SUNSHINE-001"
+                    placeholder={t('e.g. SUNSHINE-001', 'p. ej. SUNSHINE-001')}
                     autoComplete="off"
                     autoCapitalize="characters"
                     spellCheck={false}
@@ -112,12 +133,15 @@ export function SplashScreen() {
                 ) : (
                   <KeyRound size={18} />
                 )}
-                Enter Site
+                {t('Enter Site', 'Entrar al sitio')}
               </button>
             </div>
 
             <p className="mt-6 text-center text-xs text-warmgray-400 font-body">
-              Can&apos;t find your code? Text Sunshine or Jose and we&apos;ll send it right over.
+              {t(
+                "Can't find your code? Text Sunshine or Jose and we'll send it right over.",
+                '¿No encuentras tu código? Mándale un mensaje a Sunshine o a Jose y te lo enviamos enseguida.',
+              )}
             </p>
           </div>
         </div>

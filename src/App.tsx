@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AccessProvider, useAccess } from '@/context/AccessContext';
+import { LanguageProvider } from '@/i18n/LanguageContext';
 import { SplashScreen } from '@/components/SplashScreen';
 import { AdminSplashScreen } from '@/components/AdminSplashScreen';
 import { Header } from '@/components/Header';
@@ -104,9 +105,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AccessProvider>
-      <AppContent />
-    </AccessProvider>
+    <LanguageProvider>
+      <AccessProvider>
+        <AppContent />
+      </AccessProvider>
+    </LanguageProvider>
   );
 }
 

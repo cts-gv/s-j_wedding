@@ -5,10 +5,20 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { useAccess } from '@/context/AccessContext';
 import { supabase } from '@/lib/supabase';
 import { MEAL_OPTIONS, type Attending, type Rsvp } from '@/types';
-import { WEDDING_DATE_DISPLAY, RSVP_DEADLINE } from '@/constants';
+import { useLanguage, L, type Localized } from '@/i18n/LanguageContext';
+
+// The meal is saved in English (so your admin dashboard stays consistent);
+// guests just see it in their own language.
+const MEAL_LABELS: Record<string, Localized> = {
+  'Herb-Crusted Chicken': L('Herb-Crusted Chicken', 'Pollo con costra de hierbas'),
+  'Pan-Seared Salmon': L('Pan-Seared Salmon', 'Salmón sellado a la sartén'),
+  'Mushroom Risotto (Vegetarian)': L('Mushroom Risotto (Vegetarian)', 'Risotto de hongos (vegetariano)'),
+  'Braised Short Rib': L('Braised Short Rib', 'Costilla de res estofada'),
+};
 
 export function Rsvp() {
   const { guest } = useAccess();
+  const { lang, t, weddingDate, rsvpDeadline } = useLanguage();
   const [existing, setExisting] = useState<Rsvp | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -106,10 +116,10 @@ export function Rsvp() {
         <Reveal>
           <div className="text-center">
             <p className="text-gold-400 uppercase tracking-widest-2 text-xs font-body font-medium mb-3">
-              Kindly Respond
+              {t('Kindly Respond', 'Te pedimos responder')}
             </p>
             <h2 className="text-4xl sm:text-5xl text-cream-50 font-display font-medium text-balance">
-              RSVP
+              {t('RSVP', 'Confirmar asistencia')}
             </h2>
             <div className="mt-6 flex items-center justify-center gap-3">
               <span className="h-px w-10 bg-gold-400/60" />
@@ -117,7 +127,10 @@ export function Rsvp() {
               <span className="h-px w-10 bg-gold-400/60" />
             </div>
             <p className="mt-5 text-cream-200/70 font-body text-base max-w-lg mx-auto">
-              Please let us know if you&apos;ll be joining us by {RSVP_DEADLINE}.
+              {t(
+                `Please let us know if you'll be joining us by ${rsvpDeadline}.`,
+                `Por favor avísanos si nos acompañarás a más tardar el ${rsvpDeadline}.`,
+              )}
             </p>
           </div>
         </Reveal>
@@ -133,23 +146,26 @@ export function Rsvp() {
                 <CheckCircle2 size={48} className="mx-auto text-emerald-600" />
                 <h3 className="mt-4 font-display text-2xl text-wine-700">
                   {attending === 'yes'
-                    ? "We can't wait to celebrate with you!"
-                    : 'Thank you for letting us know.'}
+                    ? t("We can't wait to celebrate with you!", '¡No podemos esperar para celebrar contigo!')
+                    : t('Thank you for letting us know.', 'Gracias por avisarnos.')}
                 </h3>
                 <p className="mt-2 text-warmgray-500 font-body text-sm">
-                  Your RSVP has been received. You can update it anytime before {RSVP_DEADLINE}.
+                  {t(
+                    `Your RSVP has been received. You can update it anytime before ${rsvpDeadline}.`,
+                    `Recibimos tu confirmación. Puedes actualizarla en cualquier momento antes del ${rsvpDeadline}.`,
+                  )}
                 </p>
                 {attending === 'yes' && (
                   <div className="mt-5 flex items-center justify-center gap-2 text-gold-600 font-body text-sm">
                     <PartyPopper size={18} />
-                    See you on {WEDDING_DATE_DISPLAY}
+                    {t('See you on', 'Nos vemos el')} {weddingDate}
                   </div>
                 )}
                 <button
                   onClick={() => setSuccess(false)}
                   className="mt-6 text-sm text-wine-600 hover:text-wine-700 font-body underline"
                 >
-                  Edit my response
+                  {t('Edit my response', 'Editar mi respuesta')}
                 </button>
               </div>
             </Reveal>
@@ -161,12 +177,15 @@ export function Rsvp() {
               >
                 {existing && (
                   <p className="text-sm text-emerald-700 bg-emerald-50 rounded-lg px-4 py-2 border border-emerald-200">
-                    You&apos;ve already submitted an RSVP — update it below.
+                    {t(
+                      "You've already submitted an RSVP — update it below.",
+                      'Ya enviaste tu confirmación; puedes actualizarla aquí abajo.',
+                    )}
                   </p>
                 )}
 
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <FormField label="Full name">
+                  <FormField label={t('Full name', 'Nombre completo')}>
                     <input
                       type="text"
                       required
@@ -175,7 +194,7 @@ export function Rsvp() {
                       className={inputCls}
                     />
                   </FormField>
-                  <FormField label="Email">
+                  <FormField label={t('Email', 'Correo electrónico')}>
                     <input
                       type="email"
                       required
@@ -186,7 +205,7 @@ export function Rsvp() {
                   </FormField>
                 </div>
 
-                <FormField label="Will you be attending?">
+                <FormField label={t('Will you be attending?', '¿Asistirás?')}>
                   <div className="grid grid-cols-3 gap-3">
                     {(['yes', 'maybe', 'no'] as Attending[]).map((opt) => (
                       <button
@@ -199,7 +218,11 @@ export function Rsvp() {
                             : 'bg-cream-100 text-warmgray-500 hover:bg-cream-200'
                         }`}
                       >
-                        {opt === 'yes' ? 'Joyfully Accept' : opt === 'no' ? 'Regretfully Decline' : 'Maybe'}
+                        {opt === 'yes'
+                          ? t('Joyfully Accept', 'Acepto con gusto')
+                          : opt === 'no'
+                            ? t('Regretfully Decline', 'Lamento no poder asistir')
+                            : t('Maybe', 'Tal vez')}
                       </button>
                     ))}
                   </div>
@@ -207,7 +230,12 @@ export function Rsvp() {
 
                 {attending !== 'no' && (
                   <>
-                    <FormField label="Number of guests (including yourself)">
+                    <FormField
+                      label={t(
+                        'Number of guests (including yourself)',
+                        'Número de invitados (contándote a ti)',
+                      )}
+                    >
                       <input
                         type="number"
                         min={1}
@@ -218,27 +246,32 @@ export function Rsvp() {
                       />
                     </FormField>
 
-                    <FormField label="Meal preference">
+                    <FormField label={t('Meal preference', 'Platillo de tu preferencia')}>
                       <select
                         value={meal}
                         onChange={(e) => setMeal(e.target.value)}
                         className={inputCls}
                       >
-                        <option value="">Select a meal...</option>
+                        <option value="">{t('Select a meal...', 'Elige un platillo...')}</option>
                         {MEAL_OPTIONS.map((m) => (
                           <option key={m} value={m}>
-                            {m}
+                            {MEAL_LABELS[m]?.[lang] ?? m}
                           </option>
                         ))}
                       </select>
                     </FormField>
 
-                    <FormField label="Dietary restrictions or allergies (optional)">
+                    <FormField
+                      label={t(
+                        'Dietary restrictions or allergies (optional)',
+                        'Restricciones alimentarias o alergias (opcional)',
+                      )}
+                    >
                       <input
                         type="text"
                         value={dietary}
                         onChange={(e) => setDietary(e.target.value)}
-                        placeholder="e.g. gluten-free, nut allergy"
+                        placeholder={t('e.g. gluten-free, nut allergy', 'p. ej. sin gluten, alergia a las nueces')}
                         className={inputCls}
                       />
                     </FormField>
@@ -257,7 +290,9 @@ export function Rsvp() {
                   className="w-full bg-wine-600 hover:bg-wine-700 disabled:opacity-60 text-cream-50 font-body font-medium rounded-full py-3.5 transition-colors flex items-center justify-center gap-2"
                 >
                   {submitting && <Loader2 size={18} className="animate-spin" />}
-                  {existing ? 'Update RSVP' : 'Submit RSVP'}
+                  {existing
+                    ? t('Update RSVP', 'Actualizar confirmación')
+                    : t('Submit RSVP', 'Enviar confirmación')}
                 </button>
               </form>
             </Reveal>

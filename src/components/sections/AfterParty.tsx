@@ -3,11 +3,13 @@ import { Loader2, Upload, Trash2, Camera, X, Clock, CheckCircle2 } from 'lucide-
 import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
 import { useAccess } from '@/context/AccessContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import type { GuestPhoto } from '@/types';
 
 export function AfterParty() {
   const { guest } = useAccess();
+  const { t } = useLanguage();
   const [photos, setPhotos] = useState<GuestPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -85,9 +87,12 @@ export function AfterParty() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <Reveal>
           <SectionTitle
-            eyebrow="The Celebration Continues"
-            title="After Wedding Party"
-            subtitle="Guests can share photos from the big day and the festivities that followed. The couple will add their own photos here after the wedding."
+            eyebrow={t('The Celebration Continues', 'La celebración continúa')}
+            title={t('After Wedding Party', 'La fiesta después de la boda')}
+            subtitle={t(
+              'Guests can share photos from the big day and the festivities that followed. The couple will add their own photos here after the wedding.',
+              'Los invitados pueden compartir fotos del gran día y de la fiesta que siguió. Los novios agregarán aquí sus propias fotos después de la boda.',
+            )}
           />
         </Reveal>
 
@@ -100,14 +105,20 @@ export function AfterParty() {
               }`}
             >
               <Upload size={18} />
-              Upload Your Photos
+              {t('Upload Your Photos', 'Sube tus fotos')}
               <input type="file" accept="image/*" onChange={handleUpload} className="hidden" />
             </label>
             <p className="text-xs text-warmgray-400 font-body text-center max-w-sm">
-              Photos are reviewed by Sunshine &amp; Jose before appearing here.
+              {t(
+                'Photos are reviewed by Sunshine & Jose before appearing here.',
+                'Sunshine y Jose revisan las fotos antes de que aparezcan aquí.',
+              )}
               {pendingCount > 0 && (
                 <span className="block mt-1 text-gold-700 font-medium">
-                  You have {pendingCount} photo{pendingCount !== 1 ? 's' : ''} waiting for approval.
+                  {t(
+                    `You have ${pendingCount} photo${pendingCount !== 1 ? 's' : ''} waiting for approval.`,
+                    `Tienes ${pendingCount} ${pendingCount !== 1 ? 'fotos pendientes' : 'foto pendiente'} de aprobación.`,
+                  )}
                 </span>
               )}
             </p>
@@ -116,7 +127,7 @@ export function AfterParty() {
 
         {uploading && (
           <p className="mt-4 text-center text-warmgray-500 font-body text-sm flex items-center justify-center gap-2">
-            <Loader2 size={16} className="animate-spin" /> Uploading...
+            <Loader2 size={16} className="animate-spin" /> {t('Uploading...', 'Subiendo...')}
           </p>
         )}
         {error && (
@@ -135,7 +146,7 @@ export function AfterParty() {
             <div className="text-center py-16">
               <Camera size={40} className="mx-auto text-warmgray-300" />
               <p className="mt-4 text-warmgray-400 font-body text-sm">
-                No photos yet. Be the first to share!
+                {t('No photos yet. Be the first to share!', 'Aún no hay fotos. ¡Sé el primero en compartir!')}
               </p>
             </div>
           ) : (
@@ -145,7 +156,7 @@ export function AfterParty() {
                   <div className="break-inside-avoid relative group rounded-xl overflow-hidden shadow-sm border border-cream-200">
                     <img
                       src={getUrl(photo.storage_path)}
-                      alt={photo.caption || `Photo by ${photo.uploader_name}`}
+                      alt={photo.caption || `${t('Photo by', 'Foto de')} ${photo.uploader_name}`}
                       loading="lazy"
                       className={`w-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105 ${
                         !photo.is_approved ? 'opacity-60' : ''
@@ -153,21 +164,21 @@ export function AfterParty() {
                       onClick={() => setLightbox(getUrl(photo.storage_path))}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-warmgray-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                      <p className="text-cream-50 font-body text-xs">by {photo.uploader_name}</p>
+                      <p className="text-cream-50 font-body text-xs">{t('by', 'por')} {photo.uploader_name}</p>
                     </div>
 
                     {/* Pending badge for uploader's own unapproved photos */}
                     {!photo.is_approved && (
                       <div className="absolute top-2 left-2 flex items-center gap-1 bg-gold-500/90 text-white text-[11px] font-body font-medium px-2.5 py-1 rounded-full">
                         <Clock size={12} />
-                        Pending
+                        {t('Pending', 'Pendiente')}
                       </div>
                     )}
                     {/* Approved badge */}
                     {photo.is_approved && photo.guest_id === guest?.id && (
                       <div className="absolute top-2 left-2 flex items-center gap-1 bg-emerald-500/90 text-white text-[11px] font-body font-medium px-2.5 py-1 rounded-full">
                         <CheckCircle2 size={12} />
-                        Approved
+                        {t('Approved', 'Aprobada')}
                       </div>
                     )}
 
@@ -175,7 +186,7 @@ export function AfterParty() {
                       <button
                         onClick={() => handleDelete(photo)}
                         className="absolute top-2 right-2 h-8 w-8 rounded-full bg-warmgray-900/70 text-cream-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-wine-600"
-                        aria-label="Delete photo"
+                        aria-label={t('Delete photo', 'Eliminar foto')}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -196,13 +207,13 @@ export function AfterParty() {
         >
           <button
             className="absolute top-5 right-5 text-cream-100 hover:text-cream-50"
-            aria-label="Close"
+            aria-label={t('Close', 'Cerrar')}
           >
             <X size={28} />
           </button>
           <img
             src={lightbox}
-            alt="Enlarged photo"
+            alt={t('Enlarged photo', 'Foto ampliada')}
             className="max-w-full max-h-full rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

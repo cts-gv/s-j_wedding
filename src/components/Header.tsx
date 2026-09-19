@@ -1,25 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Menu, X, Heart, LogOut, Shield } from 'lucide-react';
 import { useAccess } from '@/context/AccessContext';
+import { useLanguage, L } from '@/i18n/LanguageContext';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 interface HeaderProps {
   onOpenAdmin?: () => void;
 }
 
+// `label` is the short version shown in the desktop bar (Spanish words are longer, so they are
+// kept short there). `full` is the fuller version shown in the mobile menu.
 const NAV_LINKS = [
-  { label: 'Our Story', href: '#story' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'In Memory', href: '#memory' },
-  { label: 'Wedding Party', href: '#party' },
-  { label: 'Venue', href: '#venue' },
-  { label: 'Travel', href: '#travel' },
-  { label: 'RSVP', href: '#rsvp' },
-  { label: 'Notes', href: '#notes' },
-  { label: 'After Party', href: '#after' },
+  { href: '#story', label: L('Our Story', 'Historia'), full: L('Our Story', 'Nuestra historia') },
+  { href: '#gallery', label: L('Gallery', 'Galería'), full: L('Gallery', 'Galería') },
+  { href: '#memory', label: L('In Memory', 'Memoria'), full: L('In Memory', 'En memoria') },
+  { href: '#party', label: L('Wedding Party', 'Cortejo'), full: L('Wedding Party', 'Cortejo nupcial') },
+  { href: '#venue', label: L('Venue', 'Lugar'), full: L('Venue', 'Lugar') },
+  { href: '#travel', label: L('Travel', 'Viaje'), full: L('Travel', 'Viaje y hospedaje') },
+  { href: '#rsvp', label: L('RSVP', 'Confirmar'), full: L('RSVP', 'Confirmar asistencia') },
+  { href: '#notes', label: L('Notes', 'Mensajes'), full: L('Notes', 'Mensajes') },
+  { href: '#after', label: L('After Party', 'Fotos'), full: L('After Party', 'Después de la boda') },
 ];
 
 export function Header({ onOpenAdmin }: HeaderProps = {}) {
   const { guest, lock } = useAccess();
+  const { lang, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -57,7 +62,7 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
           </span>
         </button>
 
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden xl:flex items-center gap-5">
           {NAV_LINKS.map((link) => (
             <button
               key={link.href}
@@ -66,12 +71,12 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
                 scrolled ? 'text-warmgray-600' : 'text-cream-100'
               }`}
             >
-              {link.label}
+              {link.label[lang]}
             </button>
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           {guest?.is_admin && onOpenAdmin && (
             <button
               onClick={onOpenAdmin}
@@ -83,13 +88,15 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
           )}
           {guest?.full_name && (
             <span
-              className={`text-sm font-body ${
+              className={`text-sm font-body max-w-[11rem] truncate ${
                 scrolled ? 'text-warmgray-600' : 'text-cream-100'
               }`}
+              title={guest.full_name}
             >
               {guest.full_name}
             </span>
           )}
+          <LanguageToggle tone={scrolled ? 'dark' : 'light'} />
           <button
             onClick={lock}
             className={`flex items-center gap-1.5 text-sm font-body font-medium rounded-full px-4 py-2 transition-colors ${
@@ -99,22 +106,26 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
             }`}
           >
             <LogOut size={15} />
-            Exit
+            {t('Exit', 'Salir')}
           </button>
         </div>
 
-        <button
-          onClick={() => setMenuOpen((v) => !v)}
-          className={`lg:hidden ${scrolled ? 'text-wine-700' : 'text-cream-50'}`}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={26} /> : <Menu size={26} />}
-        </button>
+        {/* Mobile / tablet: quick language switch + menu button */}
+        <div className="xl:hidden flex items-center gap-3">
+          <LanguageToggle tone={scrolled ? 'dark' : 'light'} compact className="!px-3 !py-1.5" />
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className={scrolled ? 'text-wine-700' : 'text-cream-50'}
+            aria-label={t('Toggle menu', 'Abrir o cerrar el menú')}
+          >
+            {menuOpen ? <X size={26} /> : <Menu size={26} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-400 ${
+        className={`xl:hidden overflow-hidden transition-all duration-400 ${
           menuOpen ? 'max-h-[720px] mt-3' : 'max-h-0'
         }`}
       >
@@ -123,7 +134,7 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
             <>
               <div className="px-4 pt-1 pb-2">
                 <p className="text-xs font-body uppercase tracking-wider text-warmgray-500">
-                  Signed in as
+                  {t('Signed in as', 'Sesión iniciada como')}
                 </p>
                 <p className="font-display text-lg text-wine-700 leading-tight">
                   {guest.full_name}
@@ -138,7 +149,7 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
               onClick={() => handleNav(link.href)}
               className="text-left px-4 py-2.5 rounded-lg font-body text-warmgray-700 hover:bg-cream-100 hover:text-wine-700 transition-colors"
             >
-              {link.label}
+              {link.full[lang]}
             </button>
           ))}
           <div className="h-px bg-cream-200 my-2" />
@@ -150,9 +161,10 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
               }}
               className="text-left px-4 py-2.5 rounded-lg font-body text-sapphire-700 hover:bg-sapphire-50 transition-colors flex items-center gap-2"
             >
-              <Shield size={16} /> Admin Dashboard
+              <Shield size={16} /> {t('Admin Dashboard', 'Panel de administración')}
             </button>
           )}
+          <LanguageToggle tone="menu" />
           <button
             onClick={() => {
               setMenuOpen(false);
@@ -160,7 +172,7 @@ export function Header({ onOpenAdmin }: HeaderProps = {}) {
             }}
             className="text-left px-4 py-2.5 rounded-lg font-body text-wine-700 hover:bg-wine-50 transition-colors flex items-center gap-2"
           >
-            <LogOut size={16} /> Exit Site
+            <LogOut size={16} /> {t('Exit Site', 'Salir del sitio')}
           </button>
         </nav>
       </div>

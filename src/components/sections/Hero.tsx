@@ -1,15 +1,20 @@
 import { Calendar, MapPin } from 'lucide-react';
 import { Countdown } from '@/components/Countdown';
-import { WEDDING_DATE_DISPLAY, WEDDING_LOCATION } from '@/constants';
+import { WEDDING_LOCATION } from '@/constants';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export function Hero() {
+  const { t, weddingDate } = useLanguage();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img
           src="https://images.pexels.com/photos/219776/pexels-photo-219776.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          alt="Couple sharing a kiss surrounded by autumn colors"
+          alt={t(
+            'Couple sharing a kiss surrounded by autumn colors',
+            'Pareja besándose rodeada de colores otoñales',
+          )}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-warmgray-900/50 via-warmgray-900/40 to-warmgray-900/70" />
@@ -29,7 +34,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center px-6 py-20 max-w-4xl">
         <p className="text-gold-300 uppercase tracking-widest-2 text-sm font-body font-medium animate-fade-in">
-          We're getting married
+          {t("We're getting married", '¡Nos casamos!')}
         </p>
         <h1 className="mt-6 font-display text-6xl sm:text-7xl md:text-8xl text-cream-50 font-medium leading-none animate-fade-up">
           Sunshine
@@ -42,7 +47,7 @@ export function Hero() {
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-cream-100 animate-fade-up" style={{ animationDelay: '300ms' }}>
           <span className="flex items-center gap-2 font-body text-sm sm:text-base">
             <Calendar size={18} className="text-gold-400" />
-            {WEDDING_DATE_DISPLAY}
+            {weddingDate}
           </span>
           <span className="hidden sm:block h-4 w-px bg-cream-200/40" />
           <span className="flex items-center gap-2 font-body text-sm sm:text-base">
@@ -63,7 +68,7 @@ export function Hero() {
             }}
             className="inline-block bg-wine-600 hover:bg-wine-700 text-cream-50 font-body font-medium tracking-wide px-10 py-3.5 rounded-full transition-all hover:scale-105 shadow-lg"
           >
-            RSVP Now
+            {t('RSVP Now', 'Confirmar asistencia')}
           </a>
         </div>
 
@@ -72,13 +77,18 @@ export function Hero() {
         </div>
 
         <p className="mt-10 text-cream-200/80 font-body text-sm italic animate-fade-in" style={{ animationDelay: '800ms' }}>
-          "Love is the master key that opens the gates of happiness."
+          {t(
+            '"Love is the master key that opens the gates of happiness."',
+            '"El amor es la llave maestra que abre las puertas de la felicidad."',
+          )}
         </p>
       </div>
 
       {/* Scroll hint */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-cream-200/70">
-        <span className="text-xs font-body uppercase tracking-widest-2">Scroll</span>
+        <span className="text-xs font-body uppercase tracking-widest-2">
+          {t('Scroll', 'Desplázate')}
+        </span>
         <span className="block w-px h-10 bg-cream-200/40 animate-pulse" />
       </div>
     </section>

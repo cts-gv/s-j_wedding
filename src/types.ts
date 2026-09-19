@@ -19,6 +19,7 @@ export interface SpecialNote {
   guest_id: string | null;
   author_name: string;
   note: string;
+  is_approved: boolean;
   created_at: string;
 }
 

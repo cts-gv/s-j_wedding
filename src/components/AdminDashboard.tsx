@@ -75,6 +75,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     { label: 'Access Codes', value: guestsList.length, icon: KeyRound, color: 'gold' },
     { label: 'Codes Used', value: guestsList.filter((g) => g.full_name).length, icon: Check, color: 'emerald' },
     { label: 'Pending Photos', value: photos.filter((p) => !p.is_approved).length, icon: Clock, color: 'gold' },
+    { label: 'Pending Notes', value: notes.filter((n) => !n.is_approved).length, icon: Clock, color: 'gold' },
   ];
 
   const statColors: Record<string, string> = {
@@ -126,7 +127,14 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
             { id: 'notes' as Tab, label: 'Notes' },
             { id: 'photos' as Tab, label: 'Photos' },
             { id: 'guests' as Tab, label: 'Guest Codes' },
-          ]).map((t) => (
+          ]).map((t) => {
+            const pendingCount =
+              t.id === 'notes'
+                ? notes.filter((n) => !n.is_approved).length
+                : t.id === 'photos'
+                  ? photos.filter((p) => !p.is_approved).length
+                  : 0;
+            return (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
@@ -137,8 +145,18 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
               }`}
             >
               {t.label}
+              {pendingCount > 0 && (
+                <span
+                  className={`ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-medium ${
+                    tab === t.id ? 'bg-cream-50 text-wine-700' : 'bg-gold-500 text-white'
+                  }`}
+                >
+                  {pendingCount}
+                </span>
+              )}
             </button>
-          ))}
+            );
+          })}
         </div>
 
         {loading ? (
@@ -150,7 +168,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
         ) : tab === 'rsvps' ? (
           <RsvpTable rsvps={rsvps} />
         ) : tab === 'notes' ? (
-          <NotesList notes={notes} />
+          <NoteReview notes={notes} onReload={loadData} />
         ) : tab === 'photos' ? (
           <PhotoReview photos={photos} onReload={loadData} guest={guest} />
         ) : (
@@ -276,7 +294,95 @@ function StatusBadge({ status }: { status: Rsvp['attending'] }) {
   );
 }
 
-function NotesList({ notes }: { notes: SpecialNote[] }) {
+function NoteReview({ notes, onReload }: { notes: SpecialNote[]; onReload: () => void }) {
+  const [acting, setActing] = useState<string | null>(null);
+
+  const pending = notes.filter((n) => !n.is_approved);
+  const approved = notes.filter((n) => n.is_approved);
+
+  async function approve(id: string) {
+    setActing(id);
+    await supabase.from('special_notes').update({ is_approved: true }).eq('id', id);
+    setActing(null);
+    onReload();
+  }
+
+  async function reject(id: string) {
+    setActing(id);
+    await supabase.from('special_notes').delete().eq('id', id);
+    setActing(null);
+    onReload();
+  }
+
+  async function revoke(id: string) {
+    setActing(id);
+    await supabase.from('special_notes').update({ is_approved: false }).eq('id', id);
+    setActing(null);
+    onReload();
+  }
+
+  function NoteCard({ note }: { note: SpecialNote }) {
+    return (
+      <div className="bg-cream-50 rounded-2xl p-5 border border-cream-200 shadow-sm flex flex-col">
+        <div className="flex items-start gap-3">
+          <div className="shrink-0 h-9 w-9 rounded-full bg-wine-100 flex items-center justify-center">
+            <StickyNote size={16} className="text-wine-600" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-start justify-between gap-2">
+              <p className="font-body text-sm font-medium text-warmgray-800">{note.author_name}</p>
+              {note.is_approved ? (
+                <span className="flex items-center gap-1 bg-emerald-500/90 text-white text-[11px] font-body font-medium px-2.5 py-1 rounded-full">
+                  <CheckCircle2 size={12} />
+                  Approved
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 bg-gold-500/90 text-white text-[11px] font-body font-medium px-2.5 py-1 rounded-full">
+                  <Clock size={12} />
+                  Pending
+                </span>
+              )}
+            </div>
+            <p className="font-body text-xs text-warmgray-400">
+              {new Date(note.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+            <p className="mt-2.5 font-body text-sm text-warmgray-600 italic leading-relaxed">{note.note}</p>
+          </div>
+        </div>
+        <div className="mt-4 flex items-center gap-2">
+          {note.is_approved ? (
+            <button
+              onClick={() => revoke(note.id)}
+              disabled={acting === note.id}
+              className="flex-1 text-xs font-body font-medium bg-cream-100 hover:bg-cream-200 text-warmgray-600 rounded-full py-2 transition-colors disabled:opacity-60"
+            >
+              {acting === note.id ? '...' : 'Unapprove'}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => approve(note.id)}
+                disabled={acting === note.id}
+                className="flex-1 text-xs font-body font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-full py-2 transition-colors disabled:opacity-60 flex items-center justify-center gap-1"
+              >
+                {acting === note.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+                Approve
+              </button>
+              <button
+                onClick={() => reject(note.id)}
+                disabled={acting === note.id}
+                className="flex-1 text-xs font-body font-medium bg-wine-600 hover:bg-wine-700 text-white rounded-full py-2 transition-colors disabled:opacity-60 flex items-center justify-center gap-1"
+              >
+                {acting === note.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                Reject
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (notes.length === 0) {
     return (
       <p className="text-center text-warmgray-400 font-body text-sm py-16">
@@ -284,24 +390,46 @@ function NotesList({ notes }: { notes: SpecialNote[] }) {
       </p>
     );
   }
+
   return (
-    <div className="grid sm:grid-cols-2 gap-4">
-      {notes.map((note) => (
-        <div key={note.id} className="bg-cream-50 rounded-2xl p-5 border border-cream-200 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="shrink-0 h-9 w-9 rounded-full bg-wine-100 flex items-center justify-center">
-              <StickyNote size={16} className="text-wine-600" />
-            </div>
-            <div className="flex-1">
-              <p className="font-body text-sm font-medium text-warmgray-800">{note.author_name}</p>
-              <p className="font-body text-xs text-warmgray-400">
-                {new Date(note.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-              </p>
-              <p className="mt-2.5 font-body text-sm text-warmgray-600 italic leading-relaxed">{note.note}</p>
-            </div>
+    <div>
+      {/* Pending notes */}
+      {pending.length > 0 && (
+        <div className="mb-10">
+          <h3 className="font-display text-lg text-wine-700 flex items-center gap-2">
+            <Clock size={18} className="text-gold-600" />
+            Pending Review
+          </h3>
+          <p className="mt-1 mb-4 font-body text-sm text-warmgray-500">
+            {pending.length} note{pending.length !== 1 ? 's' : ''} need{pending.length === 1 ? 's' : ''} your approval before appearing in the Special Notes section. Rejecting a note deletes it.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {pending.map((note) => (
+              <NoteCard key={note.id} note={note} />
+            ))}
           </div>
         </div>
-      ))}
+      )}
+
+      {/* Approved notes */}
+      <div>
+        <h3 className="font-display text-lg text-wine-700 flex items-center gap-2">
+          <CheckCircle2 size={18} className="text-emerald-600" />
+          Approved Notes
+        </h3>
+        <p className="mt-1 mb-4 font-body text-sm text-warmgray-500">
+          {approved.length} note{approved.length !== 1 ? 's' : ''} currently visible in the Special Notes section.
+        </p>
+        {approved.length === 0 ? (
+          <p className="text-center text-warmgray-400 font-body text-sm py-8">No approved notes yet.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-4">
+            {approved.map((note) => (
+              <NoteCard key={note.id} note={note} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

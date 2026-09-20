@@ -63,7 +63,9 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
   const attending = rsvps.filter((r) => r.attending === 'yes');
   const declined = rsvps.filter((r) => r.attending === 'no');
   const maybe = rsvps.filter((r) => r.attending === 'maybe');
-  const totalGuests = attending.reduce((sum, r) => sum + r.number_of_guests, 0);
+  const totalAdults = attending.reduce((sum, r) => sum + (r.adults ?? 0), 0);
+  const totalChildren = attending.reduce((sum, r) => sum + (r.children ?? 0), 0);
+  const totalGuests = totalAdults + totalChildren;
 
   const stats = [
     { label: 'Total RSVPs', value: rsvps.length, icon: Users, color: 'sapphire' },
@@ -71,6 +73,8 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     { label: 'Declined', value: declined.length, icon: XCircle, color: 'wine' },
     { label: 'Maybe', value: maybe.length, icon: HelpCircle, color: 'gold' },
     { label: 'Total Guests', value: totalGuests, icon: Calendar, color: 'sapphire' },
+    { label: 'Adults Attending', value: totalAdults, icon: Users, color: 'royal' },
+    { label: 'Children Attending', value: totalChildren, icon: Users, color: 'royal' },
     { label: 'Notes', value: notes.length, icon: Heart, color: 'wine' },
     { label: 'Access Codes', value: guestsList.length, icon: KeyRound, color: 'gold' },
     { label: 'Codes Used', value: guestsList.filter((g) => g.full_name).length, icon: Check, color: 'emerald' },
@@ -82,6 +86,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     wine: 'bg-wine-50 text-wine-700 border-wine-200',
     emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     sapphire: 'bg-sapphire-50 text-sapphire-700 border-sapphire-200',
+    royal: 'bg-royal-50 text-royal-700 border-royal-200',
     gold: 'bg-gold-50 text-gold-700 border-gold-200',
   };
 
@@ -204,9 +209,16 @@ function Overview({ stats, statColors }: OverviewProps) {
         <h3 className="font-display text-xl text-wine-700 mb-4">Recent Activity</h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm font-body">
-            <span className="text-warmgray-500">Attending guests (including plus-ones)</span>
+            <span className="text-warmgray-500">Attending guests (adults + children)</span>
             <span className="font-medium text-emerald-700">
               {stats.find((s) => s.label === 'Total Guests')?.value ?? 0}
+            </span>
+          </div>
+          <div className="h-px bg-cream-200" />
+          <div className="flex items-center justify-between text-sm font-body">
+            <span className="text-warmgray-500">Adults / children (12 and under)</span>
+            <span className="font-medium text-royal-700">
+              {stats.find((s) => s.label === 'Adults Attending')?.value ?? 0} / {stats.find((s) => s.label === 'Children Attending')?.value ?? 0}
             </span>
           </div>
           <div className="h-px bg-cream-200" />
@@ -252,8 +264,8 @@ function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Name</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden sm:table-cell">Email</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Status</th>
-            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Guests</th>
-            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Meal</th>
+            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Adults</th>
+            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Children</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Dietary</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden lg:table-cell">Date</th>
           </tr>
@@ -266,8 +278,8 @@ function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
               <td className="px-4 py-3">
                 <StatusBadge status={rsvp.attending} />
               </td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-600">{rsvp.number_of_guests}</td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.meal_preference ?? '—'}</td>
+              <td className="px-4 py-3 font-body text-sm text-warmgray-600">{rsvp.adults}</td>
+              <td className="px-4 py-3 font-body text-sm text-warmgray-600">{rsvp.children}</td>
               <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.dietary_notes ?? '—'}</td>
               <td className="px-4 py-3 font-body text-sm text-warmgray-400 hidden lg:table-cell">
                 {new Date(rsvp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -446,6 +458,10 @@ function GuestCodesManager({ guests, onReload }: { guests: Guest[]; onReload: ()
   const [updating, setUpdating] = useState(false);
   const [noteModalId, setNoteModalId] = useState<string | null>(null);
   const [editingCodeId, setEditingCodeId] = useState<string | null>(null);
+  const [allotModalId, setAllotModalId] = useState<string | null>(null);
+  const [editAdults, setEditAdults] = useState(1);
+  const [editChildren, setEditChildren] = useState(0);
+  const [allotError, setAllotError] = useState<string | null>(null);
 
   const PAGE_SIZE = 100;
 
@@ -508,6 +524,24 @@ function GuestCodesManager({ guests, onReload }: { guests: Guest[]; onReload: ()
     onReload();
   }
 
+  async function saveAllotment(guestId: string) {
+    const adults = Math.max(0, Math.floor(Number(editAdults) || 0));
+    const children = Math.max(0, Math.floor(Number(editChildren) || 0));
+    setUpdating(true);
+    setAllotError(null);
+    const { error } = await supabase
+      .from('guests')
+      .update({ max_adults: adults, max_children: children, updated_at: new Date().toISOString() })
+      .eq('id', guestId);
+    setUpdating(false);
+    if (error) {
+      setAllotError(error.message);
+      return;
+    }
+    setAllotModalId(null);
+    onReload();
+  }
+
   async function toggleAdmin(g: Guest) {
     await supabase.from('guests').update({ is_admin: !g.is_admin, updated_at: new Date().toISOString() }).eq('id', g.id);
     onReload();
@@ -545,6 +579,7 @@ function GuestCodesManager({ guests, onReload }: { guests: Guest[]; onReload: ()
             <tr className="border-b border-cream-200 bg-cream-100/50">
               <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Access Code</th>
               <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Guest Name</th>
+              <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Guests Allowed</th>
               <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Welcome Note</th>
               <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 text-center">Admin</th>
               <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 text-right">Actions</th>
@@ -629,6 +664,20 @@ function GuestCodesManager({ guests, onReload }: { guests: Guest[]; onReload: ()
                     </span>
                   )}
                 </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => {
+                      setAllotModalId(g.id);
+                      setEditAdults(g.max_adults ?? 1);
+                      setEditChildren(g.max_children ?? 0);
+                      setAllotError(null);
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs font-body font-medium px-2.5 py-1 rounded-full border bg-royal-50 text-royal-700 border-royal-200 hover:bg-royal-100 transition-colors whitespace-nowrap"
+                    title="Edit how many guests this code can bring"
+                  >
+                    {g.max_adults ?? 1} adult{(g.max_adults ?? 1) === 1 ? '' : 's'} · {g.max_children ?? 0} child{(g.max_children ?? 0) === 1 ? '' : 'ren'}
+                  </button>
+                </td>
                 <td className="px-4 py-3 hidden md:table-cell">
                   {g.welcome_note ? (
                     <span className="font-body text-sm text-warmgray-600 line-clamp-2 max-w-xs">
@@ -710,6 +759,77 @@ function GuestCodesManager({ guests, onReload }: { guests: Guest[]; onReload: ()
             Next
             <ChevronRight size={16} />
           </button>
+        </div>
+      )}
+
+      {/* Guest allotment modal */}
+      {allotModalId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-warmgray-900/50 backdrop-blur-sm"
+            onClick={() => setAllotModalId(null)}
+            aria-hidden
+          />
+          <div className="relative z-10 w-full max-w-md bg-cream-50 rounded-2xl shadow-2xl border border-cream-200 overflow-hidden">
+            <div className="bg-royal-800 px-5 py-4 text-cream-50 flex items-center justify-between">
+              <h4 className="font-display text-lg">Guests Allowed</h4>
+              <button
+                onClick={() => setAllotModalId(null)}
+                className="text-cream-200 hover:text-cream-50 text-sm font-body"
+              >
+                Cancel
+              </button>
+            </div>
+            <div className="p-5">
+              <p className="text-xs font-body text-warmgray-500 mb-4">
+                {(() => {
+                  const g = guests.find((x) => x.id === allotModalId);
+                  return g ? `${g.full_name ?? 'Unassigned'} · code ${g.access_code}. ` : '';
+                })()}
+                This is the most this guest can RSVP for, including themselves.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="block text-xs font-body font-medium text-warmgray-600 mb-1.5 uppercase tracking-wide">
+                    Adults
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={50}
+                    value={editAdults}
+                    onChange={(e) => setEditAdults(Number(e.target.value))}
+                    className="w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-royal-400 focus:ring-2 focus:ring-royal-200 transition"
+                  />
+                </label>
+                <label className="block">
+                  <span className="block text-xs font-body font-medium text-warmgray-600 mb-1.5 uppercase tracking-wide">
+                    Children (12 &amp; under)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={50}
+                    value={editChildren}
+                    onChange={(e) => setEditChildren(Number(e.target.value))}
+                    className="w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-royal-400 focus:ring-2 focus:ring-royal-200 transition"
+                  />
+                </label>
+              </div>
+              {allotError && (
+                <p className="mt-3 text-xs text-wine-700 font-body">{allotError}</p>
+              )}
+              <div className="mt-5 flex items-center justify-end">
+                <button
+                  onClick={() => saveAllotment(allotModalId)}
+                  disabled={updating}
+                  className="bg-royal-700 hover:bg-royal-800 disabled:opacity-60 text-cream-50 font-body font-medium rounded-full px-6 py-2.5 text-sm transition-colors"
+                >
+                  {updating ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

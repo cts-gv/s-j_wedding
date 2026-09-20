@@ -6,8 +6,10 @@ export interface Rsvp {
   full_name: string;
   email: string;
   attending: Attending;
+  /** Always adults + children (kept in sync by a database trigger). */
   number_of_guests: number;
-  meal_preference: string | null;
+  adults: number;
+  children: number;
   dietary_notes: string | null;
   message: string | null;
   created_at: string;
@@ -41,13 +43,10 @@ export interface Guest {
   email: string | null;
   is_admin: boolean;
   welcome_note: string | null;
+  /** How many adults this access code may RSVP for. */
+  max_adults: number;
+  /** How many children (12 and under) this access code may RSVP for. */
+  max_children: number;
   created_at: string;
   updated_at: string;
 }
-
-export const MEAL_OPTIONS = [
-  'Herb-Crusted Chicken',
-  'Pan-Seared Salmon',
-  'Mushroom Risotto (Vegetarian)',
-  'Braised Short Rib',
-] as const;

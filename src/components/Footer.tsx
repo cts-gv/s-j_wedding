@@ -5,7 +5,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 export function Footer() {
   const { t, weddingDate } = useLanguage();
   return (
-    <footer className="bg-warmgray-900 text-cream-200/70 py-14">
+    <footer className="bg-warmgray-900 text-cream-200/70 py-14 border-t-2 border-royal-700">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Heart size={18} className="text-gold-500" fill="currentColor" />
@@ -16,7 +16,11 @@ export function Footer() {
         <p className="font-body text-sm text-cream-200/60">
           {weddingDate} · {WEDDING_LOCATION}
         </p>
-        <div className="mt-6 h-px w-32 bg-gold-400/30 mx-auto" />
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <span className="h-px w-16 bg-gold-400/30" />
+          <span className="block h-1.5 w-1.5 rotate-45 bg-royal-400" />
+          <span className="h-px w-16 bg-gold-400/30" />
+        </div>
         <p className="mt-6 font-body text-xs text-cream-200/40 italic max-w-md mx-auto">
           {t(
             '"And in her smile I see something more beautiful than the stars."',

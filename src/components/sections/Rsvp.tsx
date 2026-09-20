@@ -4,21 +4,12 @@ import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
 import { useAccess } from '@/context/AccessContext';
 import { supabase } from '@/lib/supabase';
-import { MEAL_OPTIONS, type Attending, type Rsvp } from '@/types';
-import { useLanguage, L, type Localized } from '@/i18n/LanguageContext';
-
-// The meal is saved in English (so your admin dashboard stays consistent);
-// guests just see it in their own language.
-const MEAL_LABELS: Record<string, Localized> = {
-  'Herb-Crusted Chicken': L('Herb-Crusted Chicken', 'Pollo con costra de hierbas'),
-  'Pan-Seared Salmon': L('Pan-Seared Salmon', 'Salmón sellado a la sartén'),
-  'Mushroom Risotto (Vegetarian)': L('Mushroom Risotto (Vegetarian)', 'Risotto de hongos (vegetariano)'),
-  'Braised Short Rib': L('Braised Short Rib', 'Costilla de res estofada'),
-};
+import type { Attending, Rsvp } from '@/types';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export function Rsvp() {
   const { guest } = useAccess();
-  const { lang, t, weddingDate, rsvpDeadline } = useLanguage();
+  const { t, weddingDate, rsvpDeadline } = useLanguage();
   const [existing, setExisting] = useState<Rsvp | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -28,8 +19,11 @@ export function Rsvp() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [attending, setAttending] = useState<Attending>('yes');
-  const [guests, setGuests] = useState(1);
-  const [meal, setMeal] = useState('');
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  // How many of each this access code is allowed (set by the couple in the admin dashboard)
+  const [maxAdults, setMaxAdults] = useState(guest?.max_adults ?? 1);
+  const [maxChildren, setMaxChildren] = useState(guest?.max_children ?? 0);
   const [dietary, setDietary] = useState('');
 
   useEffect(() => {
@@ -45,6 +39,20 @@ export function Rsvp() {
   async function loadRsvp() {
     if (!guest) return;
     setLoading(true);
+
+    // Always use the latest allotment, in case the couple changed it since sign-in.
+    let allowedAdults = guest.max_adults ?? 1;
+    let allowedChildren = guest.max_children ?? 0;
+    const { data: fresh } = await supabase.rpc('get_guest_by_id', { guest_id: guest.id });
+    if (fresh && fresh.length > 0) {
+      allowedAdults = fresh[0].max_adults ?? allowedAdults;
+      allowedChildren = fresh[0].max_children ?? allowedChildren;
+    }
+    setMaxAdults(allowedAdults);
+    setMaxChildren(allowedChildren);
+    setAdults((a) => Math.min(a, allowedAdults));
+    setChildren((c) => Math.min(c, allowedChildren));
+
     const { data } = await supabase
       .from('rsvps')
       .select('*')
@@ -56,8 +64,8 @@ export function Rsvp() {
       setFullName(r.full_name);
       setEmail(r.email);
       setAttending(r.attending);
-      setGuests(r.number_of_guests);
-      setMeal(r.meal_preference ?? '');
+      setAdults(Math.min(r.adults ?? 1, allowedAdults));
+      setChildren(Math.min(r.children ?? 0, allowedChildren));
       setDietary(r.dietary_notes ?? '');
     }
     setLoading(false);
@@ -70,13 +78,31 @@ export function Rsvp() {
     setError(null);
     setSuccess(false);
 
+    const attendingCount = attending !== 'no';
+    if (attendingCount && adults + children < 1) {
+      setError(t('Please select at least one guest.', 'Por favor selecciona al menos un invitado.'));
+      setSubmitting(false);
+      return;
+    }
+    if (attendingCount && adults > maxAdults) {
+      setError(t(`Your invitation allows up to ${maxAdults} adult(s).`, `Tu invitación permite hasta ${maxAdults} adulto(s).`));
+      setSubmitting(false);
+      return;
+    }
+    if (attendingCount && children > maxChildren) {
+      setError(t(`Your invitation allows up to ${maxChildren} child(ren).`, `Tu invitación permite hasta ${maxChildren} niño(s).`));
+      setSubmitting(false);
+      return;
+    }
+
     const payload = {
       guest_id: guest.id,
       full_name: fullName,
       email,
       attending,
-      number_of_guests: guests,
-      meal_preference: attending === 'yes' ? meal || null : null,
+      adults: attendingCount ? adults : 0,
+      children: attendingCount ? children : 0,
+      number_of_guests: attendingCount ? adults + children : 0,
       dietary_notes: dietary || null,
       updated_at: new Date().toISOString(),
     };
@@ -123,7 +149,7 @@ export function Rsvp() {
             </h2>
             <div className="mt-6 flex items-center justify-center gap-3">
               <span className="h-px w-10 bg-gold-400/60" />
-              <Heart size={14} className="text-gold-400" fill="currentColor" />
+              <Heart size={14} className="text-royal-300" fill="currentColor" />
               <span className="h-px w-10 bg-gold-400/60" />
             </div>
             <p className="mt-5 text-cream-200/70 font-body text-base max-w-lg mx-auto">
@@ -230,36 +256,42 @@ export function Rsvp() {
 
                 {attending !== 'no' && (
                   <>
-                    <FormField
-                      label={t(
-                        'Number of guests (including yourself)',
-                        'Número de invitados (contándote a ti)',
+                    <p className="text-sm text-royal-800 bg-royal-50 rounded-lg px-4 py-2 border border-royal-200 font-body">
+                      {t(
+                        `Your invitation includes up to ${maxAdults} adult${maxAdults === 1 ? '' : 's'} and ${maxChildren} child${maxChildren === 1 ? '' : 'ren'} (12 and under), including yourself.`,
+                        `Tu invitación incluye hasta ${maxAdults} adulto${maxAdults === 1 ? '' : 's'} y ${maxChildren} niño${maxChildren === 1 ? '' : 's'} (12 años o menos), contándote a ti.`,
                       )}
-                    >
-                      <input
-                        type="number"
-                        min={1}
-                        max={5}
-                        value={guests}
-                        onChange={(e) => setGuests(Math.max(1, Number(e.target.value)))}
-                        className={`${inputCls} max-w-24`}
-                      />
-                    </FormField>
+                    </p>
 
-                    <FormField label={t('Meal preference', 'Platillo de tu preferencia')}>
-                      <select
-                        value={meal}
-                        onChange={(e) => setMeal(e.target.value)}
-                        className={inputCls}
-                      >
-                        <option value="">{t('Select a meal...', 'Elige un platillo...')}</option>
-                        {MEAL_OPTIONS.map((m) => (
-                          <option key={m} value={m}>
-                            {MEAL_LABELS[m]?.[lang] ?? m}
-                          </option>
-                        ))}
-                      </select>
-                    </FormField>
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <FormField label={t('Adults', 'Adultos')}>
+                        <select
+                          value={adults}
+                          onChange={(e) => setAdults(Number(e.target.value))}
+                          className={inputCls}
+                        >
+                          {Array.from({ length: maxAdults + 1 }, (_, n) => n).map((n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ))}
+                        </select>
+                      </FormField>
+                      <FormField label={t('Children (12 and under)', 'Niños (12 años o menos)')}>
+                        <select
+                          value={children}
+                          onChange={(e) => setChildren(Number(e.target.value))}
+                          disabled={maxChildren === 0}
+                          className={`${inputCls} disabled:opacity-60`}
+                        >
+                          {Array.from({ length: maxChildren + 1 }, (_, n) => n).map((n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ))}
+                        </select>
+                      </FormField>
+                    </div>
 
                     <FormField
                       label={t(
@@ -304,7 +336,7 @@ export function Rsvp() {
 }
 
 const inputCls =
-  'w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-wine-400 focus:ring-2 focus:ring-wine-200 transition';
+  'w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-warmgray-800 font-body text-sm focus:outline-none focus:border-royal-500 focus:ring-2 focus:ring-royal-200 transition';
 
 function FormField({ label, children }: { label: string; children: React.ReactNode }) {
   return (

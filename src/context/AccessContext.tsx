@@ -14,6 +14,8 @@ export interface Guest {
   full_name: string | null;
   is_admin: boolean;
   welcome_note: string | null;
+  max_adults: number;
+  max_children: number;
 }
 
 export interface UnlockResult {

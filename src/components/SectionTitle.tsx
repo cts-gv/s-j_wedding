@@ -36,7 +36,7 @@ export function SectionTitle({
         className={`mt-6 flex items-center gap-3 ${align === 'center' ? 'justify-center' : ''}`}
       >
         <span className="h-px w-10 bg-gold-400" />
-        <span className="block h-2 w-2 rotate-45 bg-gold-400" />
+        <span className="block h-2 w-2 rotate-45 bg-royal-600" />
         <span className="h-px w-10 bg-gold-400" />
       </div>
     </div>

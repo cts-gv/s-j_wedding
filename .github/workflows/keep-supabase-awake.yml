@@ -1,0 +1,39 @@
+# Sends a tiny request to each Supabase project once a day so the free plan
+# never sees 7 days of inactivity (which would pause the project).
+#
+# The same file can live in BOTH repos. It needs no GitHub secrets: the URL and
+# key values below are the public "anon" keys that are already visible inside
+# your websites, so it is fine to keep them here.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: '17 14 * * *'   # every day at 14:17 UTC
+  workflow_dispatch:         # lets you run it by hand from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the wedding website database
+        env:
+          SUPABASE_URL: https://dlphkaswpfuoboilulny.supabase.co
+          SUPABASE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscGhrYXN3cGZ1b2JvaWx1bG55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MDQ1MTksImV4cCI6MjEwMzE4MDUxOX0.oLp3dObP2ygwTZMezIx_fERBgYalN9l46JNwEanPxOI
+        run: |
+          code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/special_notes?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY")
+          echo "Wedding website database answered: HTTP $code"
+          # Any answer below 500 means the project is awake and responding.
+          [ "$code" -ge 200 ] && [ "$code" -lt 500 ]
+
+      - name: Ping the Save the Date database
+        env:
+          SUPABASE_URL: https://irbvxortgcebuiztfkoc.supabase.co
+          SUPABASE_KEY: sb_publishable_R6cVCubWSuhKa4fVgSziKg_9g_3LVAN
+        run: |
+          code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/save_the_date_responses?select=names&limit=1" \
+            -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY")
+          echo "Save the Date database answered: HTTP $code"
+          [ "$code" -ge 200 ] && [ "$code" -lt 500 ]

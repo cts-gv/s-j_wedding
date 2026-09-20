@@ -264,7 +264,7 @@ export function Rsvp() {
                     </p>
 
                     <div className="grid sm:grid-cols-2 gap-5">
-                      <FormField label={t('Adults', 'Adultos')}>
+                      <FormField label={t('Adults (including you)', 'Adultos (contándote a ti)')}>
                         <select
                           value={adults}
                           onChange={(e) => setAdults(Number(e.target.value))}

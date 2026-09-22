@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guest Check-In</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#73202d">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     Same palette as the wedding site (tailwind.config.js), so this
+     page matches even though it isn't built with the rest of the site.
+     ============================================================ */
+  :root {
+    --cream-50:  #fdfbf7;
+    --cream-100: #faf5ec;
+    --cream-200: #f3e9d6;
+    --cream-300: #ead9bd;
+
+    --wine-50:   #fbf2f2;
+    --wine-100:  #f6e3e3;
+    --wine-200:  #ecc5c6;
+    --wine-400:  #c96e71;
+    --wine-600:  #8b2635;
+    --wine-700:  #73202d;
+
+    --gold-100:  #f6ecc9;
+    --gold-400:  #d4b34a;
+    --gold-700:  #a8841f;
+
+    --emerald-50:  #ecfdf5;
+    --emerald-100: #d1fae5;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+    --emerald-800: #065f46;
+
+    --warmgray-400: #a89a7f;
+    --warmgray-500: #877a61;
+    --warmgray-600: #6b604d;
+    --warmgray-800: #3a342a;
+    --warmgray-900: #241f18;
+
+    --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --font-body:    "Jost", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh; min-height: 100svh;
+    background: var(--cream-100);
+    color: var(--warmgray-800);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1, h2 { font-family: var(--font-display); margin: 0; }
+  button, input { font: inherit; }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--cream-100); }
+  ::-webkit-scrollbar-thumb { background: var(--wine-400); border-radius: 999px; }
+
+  /* ---------- Passcode gate ---------- */
+  #gate {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--warmgray-900);
+    padding: 1.5rem;
+  }
+  #gate .card {
+    width: 100%; max-width: 22rem;
+    background: var(--cream-50);
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,.5);
+    overflow: hidden;
+  }
+  #gate .card-head {
+    background: var(--wine-700);
+    color: var(--cream-50);
+    text-align: center;
+    padding: 1.75rem 1.5rem 1.5rem;
+  }
+  #gate .card-head h1 { font-size: 1.5rem; }
+  #gate .card-body { padding: 1.75rem 1.5rem 2rem; }
+  #gate .icon-circle {
+    width: 3.25rem; height: 3.25rem; margin: 0 auto .75rem;
+    border-radius: 50%;
+    background: var(--emerald-100);
+    color: var(--emerald-700);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #gate p.help { text-align: center; color: var(--warmgray-500); font-size: .9rem; margin: 0 0 1.25rem; }
+  #gate label {
+    display: block; margin-bottom: .4rem;
+    font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--warmgray-600); text-align: center;
+  }
+  #gate input {
+    width: 100%; min-height: 3rem; padding: .75rem 1rem;
+    text-align: center; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--warmgray-800); background: var(--cream-50);
+    border: 1px solid var(--cream-300); border-radius: .75rem;
+  }
+  #gate input:focus { outline: none; border-color: var(--emerald-500); box-shadow: 0 0 0 2px var(--emerald-100); }
+  #gate .gate-error {
+    margin-top: .85rem; padding: .6rem .9rem; font-size: .85rem;
+    color: var(--wine-700); background: var(--wine-50); border: 1px solid var(--wine-200);
+    border-radius: .6rem; display: none;
+  }
+  #gate button {
+    width: 100%; margin-top: 1rem; min-height: 3.1rem;
+    background: var(--emerald-700); color: var(--cream-50);
+    border: 0; border-radius: 999px; font-weight: 500; cursor: pointer;
+  }
+  #gate button:hover { background: var(--emerald-800); }
+
+  /* ---------- Top bar ---------- */
+  #topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--warmgray-900); color: var(--cream-50);
+    padding: calc(1rem + env(safe-area-inset-top, 0px)) 1.25rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  }
+  #topbar h1 { font-size: 1.35rem; display: flex; align-items: center; gap: .5rem; }
+  #topbar button {
+    background: none; border: 0; color: var(--cream-200);
+    font-size: .85rem; cursor: pointer; display: flex; align-items: center; gap: .35rem;
+  }
+  #topbar button:hover { color: var(--cream-50); }
+
+  main { max-width: 34rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+  /* ---------- Live total ---------- */
+  #totals {
+    background: var(--cream-50); border: 1px solid var(--cream-200);
+    border-radius: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    padding: 1.1rem 1.25rem; margin-bottom: 1.25rem;
+  }
+  #totals .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+  #totals .label { display: flex; align-items: center; gap: .4rem; color: var(--warmgray-500); font-size: .85rem; }
+  #totals .count { font-family: var(--font-display); font-size: 1.5rem; color: var(--wine-700); }
+  #totals .count .of { color: var(--warmgray-400); font-size: 1.05rem; }
+  #totals .bar-track { height: .5rem; border-radius: 999px; background: var(--cream-200); overflow: hidden; }
+  #totals .bar-fill { height: 100%; background: var(--emerald-500); width: 0%; transition: width .5s ease; }
+
+  /* ---------- Search ---------- */
+  #search-wrap { position: relative; margin-bottom: 1rem; }
+  #search-wrap svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--warmgray-400); }
+  #search {
+    width: 100%; min-height: 3.25rem; padding: .8rem 1rem .8rem 2.75rem;
+    background: var(--cream-50); border: 1px solid var(--cream-300); border-radius: 999px;
+    color: var(--warmgray-800);
+  }
+  #search:focus { outline: none; border-color: var(--wine-400); box-shadow: 0 0 0 2px var(--wine-200); }
+
+  .hint { text-align: center; color: var(--warmgray-400); font-size: .9rem; padding: 2rem 1rem; }
+  .section-label {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--warmgray-400); margin: 0 0 .6rem;
+  }
+
+  /* ---------- Guest row ---------- */
+  .guest-row {
+    background: var(--cream-50); border: 1px solid var(--cream-200); border-radius: 1.1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    padding: .9rem 1rem; margin-bottom: .65rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .guest-info { flex: 1; min-width: 0; }
+  .guest-name { font-weight: 500; color: var(--warmgray-800); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .guest-name.unassigned { font-style: italic; color: var(--warmgray-400); }
+  .guest-code { font-size: .75rem; color: var(--warmgray-400); font-family: monospace; }
+  .guest-tag { margin-top: .2rem; display: flex; align-items: center; gap: .3rem; font-size: .72rem; color: var(--gold-700); }
+  .guest-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+
+  .btn-round {
+    width: 2.15rem; height: 2.15rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--cream-300); background: none; color: var(--warmgray-400); cursor: pointer;
+  }
+  .btn-round:hover:not(:disabled) { color: var(--wine-600); border-color: var(--wine-200); }
+  .btn-round:disabled { opacity: .3; cursor: default; }
+
+  .btn-add {
+    width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 0;
+    background: var(--emerald-600); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-add:hover:not(:disabled) { background: var(--emerald-700); }
+  .btn-add:disabled { opacity: .6; cursor: default; }
+
+  .count-pill {
+    min-width: 4rem; text-align: center; font-weight: 600; font-size: .85rem;
+    border-radius: 999px; padding: .35rem .7rem;
+    background: var(--cream-100); color: var(--warmgray-400);
+  }
+  .count-pill.some { background: var(--wine-50); color: var(--wine-700); }
+  .count-pill.complete { background: var(--emerald-100); color: var(--emerald-700); }
+  .count-pill.over { background: var(--gold-100); color: var(--gold-700); }
+
+  /* ---------- Recent list ---------- */
+  .recent-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(253,251,247,.7); border: 1px solid var(--cream-200); border-radius: .8rem;
+    padding: .55rem .9rem; margin-bottom: .45rem; font-size: .9rem;
+  }
+  .recent-row .time { color: var(--warmgray-400); font-size: .78rem; }
+
+  .spinner {
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
+    border: 2px solid var(--wine-200); border-top-color: var(--wine-600);
+    animation: spin .7s linear infinite; margin: 2.5rem auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Passcode gate -->
+<div id="gate">
+  <div class="card">
+    <div class="card-head">
+      <h1>Guest Check-In</h1>
+    </div>
+    <div class="card-body">
+      <div class="icon-circle" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <p class="help">Enter the door staff passcode to look up arriving guests.</p>
+      <label for="gate-input">Passcode</label>
+      <input id="gate-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+      <p class="gate-error" id="gate-error">That passcode isn't right. Please try again.</p>
+      <button id="gate-submit" type="button">Enter Check-In</button>
+    </div>
+  </div>
+</div>
+
+<!-- Top bar -->
+<div id="topbar">
+  <h1>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Guest Check-In
+  </h1>
+  <button id="lock-btn" type="button">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Lock
+  </button>
+</div>
+
+<main>
+  <!-- Live total -->
+  <div id="totals">
+    <div class="row">
+      <span class="label">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Arrived
+      </span>
+      <span class="count"><span id="total-checked-in">0</span> <span class="of">/ <span id="total-expected">—</span></span></span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- Search -->
+  <div id="search-wrap">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search" type="text" placeholder="Search by code or name..." autocomplete="off" />
+  </div>
+
+  <div id="loading" class="spinner"></div>
+  <div id="results"></div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ============================================================
+  // CONFIG — edit these two lines if anything changes.
+  // ============================================================
+
+  // Same wedding-site Supabase project your main site uses (public anon key,
+  // same as in your site's .env — safe to keep here for the same reason).
+  var SUPABASE_URL = "https://dlphkaswpfuoboilulny.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscGhrYXN3cGZ1b2JvaWx1bG55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MDQ1MTksImV4cCI6MjEwMzE4MDUxOX0.oLp3dObP2ygwTZMezIx_fERBgYalN9l46JNwEanPxOI";
+
+  // Whoever works the door types this once to get in. Change it to whatever
+  // you like before the wedding, and share it only with that person.
+  var DOOR_PASSCODE = "SUNSHINE-DOOR-2027";
+
+  var GATE_STORAGE_KEY = "checkin_unlocked";
+  var POLL_MS = 10000;
+
+  // ============================================================
+  // Tiny REST helper (same approach as the Save the Date page)
+  // ============================================================
+  function restGet(path) {
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY }
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Request failed: " + r.status);
+      return r.json();
+    });
+  }
+  function restPost(path, body) {
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: "Bearer " + SUPABASE_ANON_KEY,
+        Prefer: "return=representation"
+      },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Request failed: " + r.status);
+      return r.json();
+    });
+  }
+  function restDelete(path) {
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, {
+      method: "DELETE",
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY }
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Request failed: " + r.status);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ============================================================
+  // Passcode gate
+  // ============================================================
+  var gate = document.getElementById("gate");
+  var gateInput = document.getElementById("gate-input");
+  var gateError = document.getElementById("gate-error");
+
+  function tryUnlock() {
+    var entered = gateInput.value.trim();
+    if (entered.toUpperCase() === DOOR_PASSCODE.toUpperCase()) {
+      try { sessionStorage.setItem(GATE_STORAGE_KEY, "1"); } catch (e) {}
+      gate.classList.add("hidden");
+      boot();
+    } else {
+      gateError.style.display = "block";
+    }
+  }
+  document.getElementById("gate-submit").addEventListener("click", tryUnlock);
+  gateInput.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  document.getElementById("lock-btn").addEventListener("click", function () {
+    try { sessionStorage.removeItem(GATE_STORAGE_KEY); } catch (e) {}
+    location.reload();
+  });
+
+  var alreadyUnlocked = false;
+  try { alreadyUnlocked = sessionStorage.getItem(GATE_STORAGE_KEY) === "1"; } catch (e) {}
+  if (alreadyUnlocked) {
+    gate.classList.add("hidden");
+  } else {
+    gateInput.focus();
+  }
+
+  // ============================================================
+  // Data + rendering
+  // ============================================================
+  var guests = [];
+  var rsvps = [];
+  var events = [];
+  var acting = null; // guest id currently mid-request, to disable its buttons
+  var pollTimer = null;
+
+  var searchInput = document.getElementById("search");
+  var resultsEl = document.getElementById("results");
+  var loadingEl = document.getElementById("loading");
+
+  function rsvpByGuestId(guestId) {
+    for (var i = 0; i < rsvps.length; i++) if (rsvps[i].guest_id === guestId) return rsvps[i];
+    return null;
+  }
+  function partySize(guestId) {
+    var r = rsvpByGuestId(guestId);
+    return r && r.attending === "yes" ? r.number_of_guests : 1;
+  }
+  function rsvpTag(guestId) {
+    var r = rsvpByGuestId(guestId);
+    if (!r) return "No RSVP on file";
+    if (r.attending === "no") return "RSVP: not attending";
+    if (r.attending === "maybe") return "RSVP: maybe";
+    return null;
+  }
+  function countForGuest(guestId) {
+    var n = 0;
+    for (var i = 0; i < events.length; i++) if (events[i].guest_id === guestId) n++;
+    return n;
+  }
+  function latestEventForGuest(guestId) {
+    var latest = null;
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].guest_id !== guestId) continue;
+      if (!latest || events[i].checked_in_at > latest.checked_in_at) latest = events[i];
+    }
+    return latest;
+  }
+
+  function renderTotals() {
+    var expected = 0;
+    for (var i = 0; i < rsvps.length; i++) {
+      if (rsvps[i].attending === "yes") expected += rsvps[i].number_of_guests;
+    }
+    var checkedIn = events.length;
+    document.getElementById("total-checked-in").textContent = checkedIn;
+    document.getElementById("total-expected").textContent = expected > 0 ? expected : "—";
+    var pct = expected > 0 ? Math.min(100, (checkedIn / expected) * 100) : 0;
+    document.getElementById("bar-fill").style.width = pct + "%";
+  }
+
+  function guestRowHtml(g) {
+    var count = countForGuest(g.id);
+    var size = partySize(g.id);
+    var tag = rsvpTag(g.id);
+    var busy = acting === g.id;
+    var complete = count > 0 && count >= size;
+    var over = count > size;
+    var pillClass = complete ? (over ? "over" : "complete") : (count > 0 ? "some" : "");
+    var nameHtml = g.full_name
+      ? escapeHtml(g.full_name)
+      : '<span class="unassigned">Unassigned</span>';
+
+    return (
+      '<div class="guest-row" data-guest-id="' + g.id + '">' +
+        '<div class="guest-info">' +
+          '<div class="guest-name' + (g.full_name ? "" : " unassigned") + '">' + nameHtml + "</div>" +
+          '<div class="guest-code">' + escapeHtml(g.access_code) + "</div>" +
+          (tag ? '<div class="guest-tag">⚠ ' + escapeHtml(tag) + "</div>" : "") +
+        "</div>" +
+        '<div class="guest-actions">' +
+          '<button class="btn-round" data-action="undo" data-id="' + g.id + '" ' + (busy || count === 0 ? "disabled" : "") + ' aria-label="Undo last check-in for ' + escapeHtml(g.full_name || g.access_code) + '">' +
+            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5A5.5 5.5 0 0 1 14.5 20H11"/></svg>' +
+          "</button>" +
+          '<div class="count-pill ' + pillClass + '">' + count + " of " + size + "</div>" +
+          '<button class="btn-add" data-action="checkin" data-id="' + g.id + '" ' + (busy ? "disabled" : "") + ' aria-label="Check in one guest for ' + escapeHtml(g.full_name || g.access_code) + '">' +
+            (busy
+              ? '<svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" opacity=".25"/><path d="M22 12a10 10 0 0 1-10 10"/></svg>'
+              : '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>') +
+          "</button>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  function render() {
+    renderTotals();
+    var q = searchInput.value.trim().toLowerCase();
+
+    if (!q) {
+      var recentEvents = events.slice().sort(function (a, b) {
+        return b.checked_in_at < a.checked_in_at ? -1 : b.checked_in_at > a.checked_in_at ? 1 : 0;
+      }).slice(0, 8);
+
+      if (recentEvents.length === 0) {
+        resultsEl.innerHTML = '<p class="hint">Search a guest\'s code or name to check them in.</p>';
+        return;
+      }
+      var html = '<p class="section-label">Recently checked in</p>';
+      for (var i = 0; i < recentEvents.length; i++) {
+        var ev = recentEvents[i];
+        var g = null;
+        for (var j = 0; j < guests.length; j++) if (guests[j].id === ev.guest_id) { g = guests[j]; break; }
+        var time = new Date(ev.checked_in_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        html += '<div class="recent-row"><span>' + escapeHtml(g ? (g.full_name || g.access_code) : "Unknown guest") + '</span><span class="time">' + time + "</span></div>";
+      }
+      resultsEl.innerHTML = html;
+      return;
+    }
+
+    var matches = guests.filter(function (g) {
+      return g.access_code.toLowerCase().indexOf(q) !== -1 ||
+        (g.full_name || "").toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 25);
+
+    if (matches.length === 0) {
+      resultsEl.innerHTML = '<p class="hint">No matching guest code or name.</p>';
+      return;
+    }
+    resultsEl.innerHTML = matches.map(guestRowHtml).join("");
+  }
+
+  resultsEl.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-action]");
+    if (!btn || btn.disabled) return;
+    var id = btn.getAttribute("data-id");
+    if (btn.getAttribute("data-action") === "checkin") checkIn(id);
+    else undo(id);
+  });
+
+  searchInput.addEventListener("input", render);
+
+  function reloadEvents() {
+    return restGet("checkin_events?select=id,guest_id,checked_in_at").then(function (data) {
+      events = data || [];
+    });
+  }
+
+  function checkIn(guestId) {
+    acting = guestId;
+    render();
+    restPost("checkin_events", { guest_id: guestId })
+      .then(reloadEvents)
+      .catch(function (err) { console.error(err); alert("Something went wrong. Please try again."); })
+      .then(function () { acting = null; render(); });
+  }
+
+  function undo(guestId) {
+    var latest = latestEventForGuest(guestId);
+    if (!latest) return;
+    acting = guestId;
+    render();
+    restDelete("checkin_events?id=eq." + latest.id)
+      .then(reloadEvents)
+      .catch(function (err) { console.error(err); alert("Something went wrong. Please try again."); })
+      .then(function () { acting = null; render(); });
+  }
+
+  function loadAll() {
+    return Promise.all([
+      restGet("guests?select=id,access_code,full_name&order=access_code.asc"),
+      restGet("rsvps?select=guest_id,attending,number_of_guests"),
+      restGet("checkin_events?select=id,guest_id,checked_in_at")
+    ]).then(function (results) {
+      guests = results[0] || [];
+      rsvps = results[1] || [];
+      events = results[2] || [];
+    });
+  }
+
+  function boot() {
+    loadingEl.classList.remove("hidden");
+    resultsEl.innerHTML = "";
+    loadAll()
+      .then(function () {
+        loadingEl.classList.add("hidden");
+        render();
+        searchInput.focus();
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(function () {
+          loadAll().then(render).catch(function (err) { console.error(err); });
+        }, POLL_MS);
+      })
+      .catch(function (err) {
+        console.error(err);
+        loadingEl.classList.add("hidden");
+        resultsEl.innerHTML = '<p class="hint">Could not load guest data. Check your connection and reload the page.</p>';
+      });
+  }
+
+  if (alreadyUnlocked) boot();
+})();
+</script>
+</body>
+</html>

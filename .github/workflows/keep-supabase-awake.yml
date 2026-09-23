@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: Ping the wedding website database
         env:
-          SUPABASE_URL: https://dlphkaswpfuoboilulny.supabase.co
-          SUPABASE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscGhrYXN3cGZ1b2JvaWx1bG55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MDQ1MTksImV4cCI6MjEwMzE4MDUxOX0.oLp3dObP2ygwTZMezIx_fERBgYalN9l46JNwEanPxOI
+          SUPABASE_URL: https://unxixhrmjhgnwqjelcli.supabase.co
+          SUPABASE_KEY: sb_publishable_4SfIDiy61cFq8Qx2ZL2laQ_RTBnTZyy
         run: |
           code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
             "$SUPABASE_URL/rest/v1/special_notes?select=id&limit=1" \

@@ -5,6 +5,7 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { useAccess } from '@/context/AccessContext';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/lib/supabase';
+import { compressImage } from '@/lib/compressImage';
 import type { GuestPhoto } from '@/types';
 
 export function AfterParty() {
@@ -13,6 +14,7 @@ export function AfterParty() {
   const [photos, setPhotos] = useState<GuestPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
 
@@ -31,10 +33,15 @@ export function AfterParty() {
   }, [loadPhotos]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !guest) return;
-    setUploading(true);
+    const rawFile = e.target.files?.[0];
+    if (!rawFile || !guest) return;
     setError(null);
+
+    setCompressing(true);
+    const file = await compressImage(rawFile);
+    setCompressing(false);
+
+    setUploading(true);
 
     const ext = file.name.split('.').pop();
     const path = `${guest.id}/${Date.now()}.${ext}`;
@@ -101,7 +108,7 @@ export function AfterParty() {
           <div className="mt-12 flex flex-col items-center gap-3">
             <label
               className={`flex items-center gap-2 bg-wine-600 hover:bg-wine-700 text-cream-50 font-body font-medium rounded-full px-7 py-3 text-sm cursor-pointer transition-colors ${
-                uploading ? 'opacity-60 pointer-events-none' : ''
+                uploading || compressing ? 'opacity-60 pointer-events-none' : ''
               }`}
             >
               <Upload size={18} />
@@ -125,6 +132,11 @@ export function AfterParty() {
           </div>
         </Reveal>
 
+        {compressing && (
+          <p className="mt-4 text-center text-warmgray-500 font-body text-sm flex items-center justify-center gap-2">
+            <Loader2 size={16} className="animate-spin" /> {t('Compressing photo...', 'Comprimiendo foto...')}
+          </p>
+        )}
         {uploading && (
           <p className="mt-4 text-center text-warmgray-500 font-body text-sm flex items-center justify-center gap-2">
             <Loader2 size={16} className="animate-spin" /> {t('Uploading...', 'Subiendo...')}

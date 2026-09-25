@@ -4,8 +4,15 @@ import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
 import { useAccess } from '@/context/AccessContext';
 import { supabase } from '@/lib/supabase';
-import type { Attending, Rsvp } from '@/types';
+import type { Attending, GuestType, Rsvp, RsvpGuest } from '@/types';
 import { useLanguage } from '@/i18n/LanguageContext';
+
+/** Grow or shrink a list of names to `size`, keeping whatever was already typed. */
+function resizeNames(names: string[], size: number): string[] {
+  if (size === names.length) return names;
+  if (size < names.length) return names.slice(0, size);
+  return [...names, ...Array.from({ length: size - names.length }, () => '')];
+}
 
 export function Rsvp() {
   const { guest } = useAccess();
@@ -25,6 +32,11 @@ export function Rsvp() {
   const [maxAdults, setMaxAdults] = useState(guest?.max_adults ?? 1);
   const [maxChildren, setMaxChildren] = useState(guest?.max_children ?? 0);
   const [dietary, setDietary] = useState('');
+  // Name of every adult / child coming under this access code (index 0 of
+  // adultNames is assumed to be the person filling out the form, unless they
+  // type something different).
+  const [adultNames, setAdultNames] = useState<string[]>(['']);
+  const [childNames, setChildNames] = useState<string[]>([]);
 
   useEffect(() => {
     if (!guest) {
@@ -60,13 +72,29 @@ export function Rsvp() {
       .maybeSingle();
     if (data) {
       const r = data as Rsvp;
+      const finalAdults = Math.min(r.adults ?? 1, allowedAdults);
+      const finalChildren = Math.min(r.children ?? 0, allowedChildren);
       setExisting(r);
       setFullName(r.full_name);
       setEmail(r.email);
       setAttending(r.attending);
-      setAdults(Math.min(r.adults ?? 1, allowedAdults));
-      setChildren(Math.min(r.children ?? 0, allowedChildren));
+      setAdults(finalAdults);
+      setChildren(finalChildren);
       setDietary(r.dietary_notes ?? '');
+
+      const { data: members } = await supabase
+        .from('rsvp_guests')
+        .select('*')
+        .eq('rsvp_id', r.id)
+        .order('sort_order', { ascending: true });
+      const list = (members as RsvpGuest[] | null) ?? [];
+      const loadedAdults = list.filter((m) => m.guest_type === 'adult').map((m) => m.full_name);
+      const loadedChildren = list.filter((m) => m.guest_type === 'child').map((m) => m.full_name);
+      setAdultNames(resizeNames(loadedAdults.length ? loadedAdults : [r.full_name], finalAdults));
+      setChildNames(resizeNames(loadedChildren, finalChildren));
+    } else {
+      setAdultNames(resizeNames([''], adults));
+      setChildNames(resizeNames([], children));
     }
     setLoading(false);
   }
@@ -95,6 +123,17 @@ export function Rsvp() {
       return;
     }
 
+    // The first adult defaults to the person filling out the form if they
+    // left that slot blank.
+    const finalAdultNames = adultNames.map((n, i) => (i === 0 && !n.trim() ? fullName : n.trim()));
+    const finalChildNames = childNames.map((n) => n.trim());
+
+    if (attendingCount && (finalAdultNames.some((n) => !n) || finalChildNames.some((n) => !n))) {
+      setError(t('Please enter a name for every guest.', 'Por favor ingresa el nombre de cada invitado.'));
+      setSubmitting(false);
+      return;
+    }
+
     const payload = {
       guest_id: guest.id,
       full_name: fullName,
@@ -107,6 +146,8 @@ export function Rsvp() {
       updated_at: new Date().toISOString(),
     };
 
+    let rsvpId = existing?.id;
+
     if (existing) {
       const { error: err } = await supabase
         .from('rsvps')
@@ -118,11 +159,49 @@ export function Rsvp() {
         return;
       }
     } else {
-      const { error: err } = await supabase.from('rsvps').insert(payload);
+      const { data: inserted, error: err } = await supabase
+        .from('rsvps')
+        .insert(payload)
+        .select('id')
+        .single();
       if (err) {
         setError(err.message);
         setSubmitting(false);
         return;
+      }
+      rsvpId = inserted?.id;
+    }
+
+    // Replace the guest-name list with whatever was just submitted. Simplest
+    // way to keep it in sync on edits, and RSVP parties are small so this is
+    // cheap.
+    if (rsvpId) {
+      await supabase.from('rsvp_guests').delete().eq('rsvp_id', rsvpId);
+      if (attendingCount) {
+        const rows: Omit<RsvpGuest, 'id' | 'created_at'>[] = [
+          ...finalAdultNames.map((full_name, i) => ({
+            rsvp_id: rsvpId as string,
+            guest_id: guest.id,
+            full_name,
+            guest_type: 'adult' as GuestType,
+            sort_order: i,
+          })),
+          ...finalChildNames.map((full_name, i) => ({
+            rsvp_id: rsvpId as string,
+            guest_id: guest.id,
+            full_name,
+            guest_type: 'child' as GuestType,
+            sort_order: finalAdultNames.length + i,
+          })),
+        ];
+        if (rows.length) {
+          const { error: guestsErr } = await supabase.from('rsvp_guests').insert(rows);
+          if (guestsErr) {
+            setError(guestsErr.message);
+            setSubmitting(false);
+            return;
+          }
+        }
       }
     }
 
@@ -267,7 +346,11 @@ export function Rsvp() {
                       <FormField label={t('Adults (including you)', 'Adultos (contándote a ti)')}>
                         <select
                           value={adults}
-                          onChange={(e) => setAdults(Number(e.target.value))}
+                          onChange={(e) => {
+                            const n = Number(e.target.value);
+                            setAdults(n);
+                            setAdultNames((prev) => resizeNames(prev, n));
+                          }}
                           className={inputCls}
                         >
                           {Array.from({ length: maxAdults + 1 }, (_, n) => n).map((n) => (
@@ -280,7 +363,11 @@ export function Rsvp() {
                       <FormField label={t('Children (12 and under)', 'Niños (12 años o menos)')}>
                         <select
                           value={children}
-                          onChange={(e) => setChildren(Number(e.target.value))}
+                          onChange={(e) => {
+                            const n = Number(e.target.value);
+                            setChildren(n);
+                            setChildNames((prev) => resizeNames(prev, n));
+                          }}
                           disabled={maxChildren === 0}
                           className={`${inputCls} disabled:opacity-60`}
                         >
@@ -292,6 +379,56 @@ export function Rsvp() {
                         </select>
                       </FormField>
                     </div>
+
+                    {(adults > 0 || children > 0) && (
+                      <FormField
+                        label={t(
+                          'Who is coming? Please list every guest by name.',
+                          '¿Quiénes vienen? Enumera a cada invitado por su nombre.',
+                        )}
+                      >
+                        <div className="space-y-2.5">
+                          {adultNames.map((name, i) => (
+                            <div key={`adult-${i}`} className="flex items-center gap-2">
+                              <span className="text-xs font-body text-warmgray-400 w-20 shrink-0">
+                                {t('Adult', 'Adulto')} {i + 1}
+                              </span>
+                              <input
+                                type="text"
+                                required={i !== 0}
+                                value={name}
+                                placeholder={
+                                  i === 0
+                                    ? t('Defaults to your name above', 'Usa tu nombre de arriba si lo dejas vacío')
+                                    : t('Full name', 'Nombre completo')
+                                }
+                                onChange={(e) =>
+                                  setAdultNames((prev) => prev.map((n, idx) => (idx === i ? e.target.value : n)))
+                                }
+                                className={inputCls}
+                              />
+                            </div>
+                          ))}
+                          {childNames.map((name, i) => (
+                            <div key={`child-${i}`} className="flex items-center gap-2">
+                              <span className="text-xs font-body text-warmgray-400 w-20 shrink-0">
+                                {t('Child', 'Niño')} {i + 1}
+                              </span>
+                              <input
+                                type="text"
+                                required
+                                value={name}
+                                placeholder={t('Full name', 'Nombre completo')}
+                                onChange={(e) =>
+                                  setChildNames((prev) => prev.map((n, idx) => (idx === i ? e.target.value : n)))
+                                }
+                                className={inputCls}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </FormField>
+                    )}
 
                     <FormField
                       label={t(

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAccess, type Guest as AccessGuest } from '@/context/AccessContext';
-import type { Rsvp, SpecialNote, Guest, GuestPhoto } from '@/types';
+import type { Rsvp, RsvpGuest, SpecialNote, Guest, GuestPhoto } from '@/types';
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -36,6 +36,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
   const { guest } = useAccess();
   const [tab, setTab] = useState<Tab>('overview');
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
+  const [rsvpGuests, setRsvpGuests] = useState<RsvpGuest[]>([]);
   const [notes, setNotes] = useState<SpecialNote[]>([]);
   const [guestsList, setGuestsList] = useState<Guest[]>([]);
   const [photos, setPhotos] = useState<GuestPhoto[]>([]);
@@ -47,13 +48,16 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
 
   async function loadData() {
     setLoading(true);
-    const [{ data: rsvpData }, { data: noteData }, { data: guestData }, { data: photoData }] = await Promise.all([
-      supabase.from('rsvps').select('*').order('created_at', { ascending: false }),
-      supabase.from('special_notes').select('*').order('created_at', { ascending: false }),
-      supabase.from('guests').select('*').order('access_code', { ascending: true }),
-      supabase.from('guest_photos').select('*').order('created_at', { ascending: false }),
-    ]);
+    const [{ data: rsvpData }, { data: rsvpGuestData }, { data: noteData }, { data: guestData }, { data: photoData }] =
+      await Promise.all([
+        supabase.from('rsvps').select('*').order('created_at', { ascending: false }),
+        supabase.from('rsvp_guests').select('*').order('sort_order', { ascending: true }),
+        supabase.from('special_notes').select('*').order('created_at', { ascending: false }),
+        supabase.from('guests').select('*').order('access_code', { ascending: true }),
+        supabase.from('guest_photos').select('*').order('created_at', { ascending: false }),
+      ]);
     setRsvps((rsvpData as Rsvp[]) ?? []);
+    setRsvpGuests((rsvpGuestData as RsvpGuest[]) ?? []);
     setNotes((noteData as SpecialNote[]) ?? []);
     setGuestsList((guestData as Guest[]) ?? []);
     setPhotos((photoData as GuestPhoto[]) ?? []);
@@ -171,7 +175,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
         ) : tab === 'overview' ? (
           <Overview stats={stats} statColors={statColors} />
         ) : tab === 'rsvps' ? (
-          <RsvpTable rsvps={rsvps} />
+          <RsvpTable rsvps={rsvps} rsvpGuests={rsvpGuests} />
         ) : tab === 'notes' ? (
           <NoteReview notes={notes} onReload={loadData} />
         ) : tab === 'photos' ? (
@@ -248,7 +252,7 @@ function Overview({ stats, statColors }: OverviewProps) {
   );
 }
 
-function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
+function RsvpTable({ rsvps, rsvpGuests }: { rsvps: Rsvp[]; rsvpGuests: RsvpGuest[] }) {
   if (rsvps.length === 0) {
     return (
       <p className="text-center text-warmgray-400 font-body text-sm py-16">
@@ -264,28 +268,51 @@ function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Name</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden sm:table-cell">Email</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Status</th>
-            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Adults</th>
-            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Children</th>
+            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Guests</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Dietary</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden lg:table-cell">Date</th>
           </tr>
         </thead>
         <tbody>
-          {rsvps.map((rsvp) => (
-            <tr key={rsvp.id} className="border-b border-cream-200 last:border-0 hover:bg-cream-100/40 transition-colors">
-              <td className="px-4 py-3 font-body text-sm text-warmgray-800 font-medium">{rsvp.full_name}</td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden sm:table-cell">{rsvp.email}</td>
-              <td className="px-4 py-3">
-                <StatusBadge status={rsvp.attending} />
-              </td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-600">{rsvp.adults}</td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-600">{rsvp.children}</td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.dietary_notes ?? '—'}</td>
-              <td className="px-4 py-3 font-body text-sm text-warmgray-400 hidden lg:table-cell">
-                {new Date(rsvp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </td>
-            </tr>
-          ))}
+          {rsvps.map((rsvp) => {
+            const party = rsvpGuests
+              .filter((g) => g.rsvp_id === rsvp.id)
+              .sort((a, b) => a.sort_order - b.sort_order);
+            return (
+              <tr key={rsvp.id} className="border-b border-cream-200 last:border-0 hover:bg-cream-100/40 transition-colors align-top">
+                <td className="px-4 py-3 font-body text-sm text-warmgray-800 font-medium">{rsvp.full_name}</td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden sm:table-cell">{rsvp.email}</td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={rsvp.attending} />
+                </td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-600">
+                  {party.length === 0 ? (
+                    <span className="text-warmgray-400">
+                      {rsvp.adults} adult{rsvp.adults === 1 ? '' : 's'}
+                      {rsvp.children > 0 ? `, ${rsvp.children} child${rsvp.children === 1 ? '' : 'ren'}` : ''}
+                    </span>
+                  ) : (
+                    <ul className="space-y-0.5">
+                      {party.map((p) => (
+                        <li key={p.id} className="whitespace-nowrap">
+                          {p.full_name}
+                          {p.guest_type === 'child' && (
+                            <span className="ml-1.5 text-[11px] text-gold-700 bg-gold-50 border border-gold-200 rounded-full px-1.5 py-0.5">
+                              child
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.dietary_notes ?? '—'}</td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-400 hidden lg:table-cell">
+                  {new Date(rsvp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

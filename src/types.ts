@@ -16,6 +16,18 @@ export interface Rsvp {
   updated_at: string;
 }
 
+export type GuestType = 'adult' | 'child';
+
+export interface RsvpGuest {
+  id: string;
+  rsvp_id: string;
+  guest_id: string | null;
+  full_name: string;
+  guest_type: GuestType;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface SpecialNote {
   id: string;
   guest_id: string | null;

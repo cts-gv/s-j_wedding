@@ -119,7 +119,7 @@ export function Venue() {
               </div>
 
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Grandview+Washington"
+                href="https://maps.app.goo.gl/ShNhD6nEjumkncsH6"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex items-center gap-2 bg-wine-600 hover:bg-wine-700 text-cream-50 font-body font-medium text-sm rounded-full px-6 py-2.5 transition-colors self-start"
@@ -137,7 +137,7 @@ export function Venue() {
                   'Venue location map — Grandview, Washington',
                   'Mapa de la ubicación del lugar: Grandview, Washington',
                 )}
-                src="https://maps.app.goo.gl/GjMthHxegfQrAQwG6output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2764.577905810237!2d-119.7892556!3d46.2089201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x549842a2221658b7%3A0x6d11b2298e72ef66!2s16302%20N%20Bone%20Rd%2C%20Prosser%2C%20WA%2099350!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
                 className="w-full h-full min-h-[320px] border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

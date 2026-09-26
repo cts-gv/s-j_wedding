@@ -50,9 +50,10 @@ export function Story() {
                   'Años después, sus caminos aún se cruzaban de vez en cuando — él sonreía, y si ella se daba cuenta, bueno, eso sigue sin resolverse. Entonces, un día, de la nada, él reunió el valor para invitarla a tomar algo. Cuando ella respondió "claro", él leyó el mensaje dos veces solo para asegurarse de no estar imaginándolo. Siete años después de esa primera copa, compraron una casa juntos. Tres años más tarde, ella lo hizo oficial con dos simples palabras: "sí, acepto".',
                 )}
               </p>
-               {t(
-                  'Proof that some love stories take their time — and a whole lot of quiet crushing from across a classroom.”',
-                  'La prueba de que algunas historias de amor se toman su tiempo... y requieren de mucho amor platónico y silencioso desde el otro lado del aula.".',
+             <p className="mt-5 text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">
+                {t(
+                  'Proof that some love stories take their time — and a whole lot of quiet crushing from across a classroom.',
+                  'La prueba de que algunas historias de amor se toman su tiempo... y requieren de mucho amor platónico y silencioso desde el otro lado del aula.',
                 )}
               </p>
             </div>

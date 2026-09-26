@@ -46,8 +46,13 @@ export function Story() {
               </p>
               <p className="mt-5 text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">
                 {t(
-                  'Years later, their paths would still cross now and then — he\u2019d smile, and whether she noticed, well, jury\u2019s still out. Then one day, completely out of nowhere, he found the courage to ask her out for a drink. When she replied "sure," he read the text twice just to make sure he wasn\u2019t imagining it. Seven years after that first drink, they bought a home together. Three years later, she made it official with two simple words: "I do.”',
+                  'Years later, their paths would still cross now and then — he\u2019d smile, and whether she noticed, well, jury\u2019s still out. Then one day, completely out of nowhere, he found the courage to ask her out for a drink. When she replied "sure," he read the text twice just to make sure he wasn\u2019t imagining it. Turns out — she noticed. Seven years after that first drink, they bought a home together. Three years later, she made it official with two simple words: "I do.”',
                   'Años después, sus caminos aún se cruzaban de vez en cuando — él sonreía, y si ella se daba cuenta, bueno, eso sigue sin resolverse. Entonces, un día, de la nada, él reunió el valor para invitarla a tomar algo. Cuando ella respondió "claro", él leyó el mensaje dos veces solo para asegurarse de no estar imaginándolo. Siete años después de esa primera copa, compraron una casa juntos. Tres años más tarde, ella lo hizo oficial con dos simples palabras: "sí, acepto".',
+                )}
+              </p>
+               {t(
+                  'Proof that some love stories take their time — and a whole lot of quiet crushing from across a classroom.”',
+                  'La prueba de que algunas historias de amor se toman su tiempo... y requieren de mucho amor platónico y silencioso desde el otro lado del aula.".',
                 )}
               </p>
             </div>

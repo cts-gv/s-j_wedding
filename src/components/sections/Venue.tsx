@@ -30,26 +30,26 @@ const VENUE_DETAILS = [
 const DIRECTIONS = [
   {
     icon: Car,
-    title: L('From Seattle', 'Desde Seattle'),
+    title: L('From Seattle/Yakima', 'Desde Seattle/Yakima'),
     detail: L(
-      'Whether traveling from Seattle via I-90 East to I-82 East or coming directly from Yakima on I-82 East, take Exit 75 for McCreadie Road/County Line Road, turn right on McCreadie Road toward Grandview, turn left onto Wine Country Road/W County Road 12, and then turn right onto North Bone Road to reach Wine Country Gardens at 16302 North Bone Road.  There will be a sign at the entrance, "Wine Country Gardens".',
-      'Ya sea que viaje desde Seattle por la I-90 Este hacia la I-82 Este o que venga directamente desde Yakima por la I-82 Este, tome la salida 75 hacia McCreadie Road/County Line Road; gire a la derecha en McCreadie Road en dirección a Grandview, gire a la izquierda en Wine Country Road/W County Road 12 y luego gire a la derecha en North Bone Road para llegar a Wine Country Gardens, ubicado en el 16302 de North Bone Road. En la entrada encontrará un letrero que dice "Wine Country Gardens".',
+      'Take I-90 East from Seattle toward Ellensburg. Near Ellensburg, take I-82 South toward Yakima and continue east/southeast toward Prosser. Stay on I-82 and take Exit 80 for Prosser/Wine Country Road. Follow the local roads toward North Bone Road, then continue to Wine Country Gardens at 16302 N Bone Road. Approximate drive time from Seattle: 3 hours. Approximate drive time from Yakima: 45–50 minutes.',
+      'Tome la I-90 en dirección este desde Seattle hacia Ellensburg. Cerca de Ellensburg, tome la I-82 en dirección sur hacia Yakima y continúe hacia el este/sureste en dirección a Prosser. Permanezca en la I-82 y tome la salida 80 hacia Prosser/Wine Country Road. Siga las carreteras locales hacia North Bone Road y luego continúe hasta Wine Country Gardens, en el 16302 de N Bone Road. Tiempo de viaje aproximado desde Seattle: 3 horas. Tiempo de viaje aproximado desde Yakima: 45–50 minutos.',
     ),
   },
   {
     icon: Navigation,
-    title: L('From Yakima', 'Desde Yakima'),
+    title: L('From Tri-Cities', 'Desde Tri-Cities'),
     detail: L(
-      '45 minutes west on I-82 W. Exit at Grandview and head south on Outlook Road, then turn onto Orchard Lane.',
-      '45 minutos hacia el oeste por la I-82 W. Sal en Grandview y avanza hacia el sur por Outlook Road; luego da vuelta en Orchard Lane.',
+      'Take I-82 West toward Prosser/Yakima. Continue to Prosser and take Exit 80 for Prosser/Wine Country Road. Follow the local roads toward North Bone Road, then continue to Wine Country Gardens at 16302 N Bone Road. Approximate drive time: 30–35 minutes.',
+      'Tome la I-82 en dirección oeste hacia Prosser/Yakima. Continúe hasta Prosser y tome la salida 80 hacia Prosser/Wine Country Road. Siga las carreteras locales en dirección a North Bone Road y luego continúe hasta Wine Country Gardens, en el 16302 de N Bone Road. Tiempo estimado de viaje: 30 a 35 minutos.',
     ),
   },
   {
     icon: MapPin,
-    title: L('The Entrance', 'La entrada'),
+    title: L('From Portland', 'From Portland'),
     detail: L(
-      'Look for the lantern-lit drive at the entrance on Orchard Lane — you will see the estate sign at the gate.',
-      'Busca el camino iluminado con faroles en la entrada de Orchard Lane; verás el letrero de la propiedad en el portón.',
+      'From Portland, Oregon Take I-84 East through the Columbia River Gorge toward Umatilla. Cross into Washington and continue toward the Tri-Cities. Follow I-82 West toward Yakima/Prosser. Take Exit 80 for Prosser/Wine Country Road and follow the signs toward Prosser and the surrounding wine country. From there, follow your navigation to North Bone Road and continue to Wine Country Gardens at 16302 N Bone Road. Approximate drive time: 3–3½ hours.',
+      'Desde Portland, Oregón, tome la I-84 en dirección este a través del desfiladero del río Columbia (Columbia River Gorge) hacia Umatilla. Cruce a Washington y continúe hacia Tri-Cities. Siga por la I-82 en dirección oeste hacia Yakima/Prosser. Tome la salida 80 hacia Prosser/Wine Country Road y siga las indicaciones hacia Prosser y la zona vinícola de los alrededores. Desde allí, siga las indicaciones de su navegador hasta North Bone Road y continúe hasta Wine Country Gardens, en el 16302 de N Bone Road. Tiempo estimado de viaje: de 3 a 3 horas y media.',
     ),
   },
 ];
@@ -63,8 +63,8 @@ export function Venue() {
         <img
           src={VENUE_PHOTO}
           alt={t(
-            'Autumn Ridge Estate — outdoor wedding venue surrounded by autumn foliage',
-            'Autumn Ridge Estate: lugar de bodas al aire libre rodeado de follaje otoñal',
+            'Wine Country Gardens — outdoor wedding venue surrounded by autumn foliage',
+            'Wine Country gardens: lugar de bodas al aire libre rodeado de follaje otoñal',
           )}
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -75,12 +75,12 @@ export function Venue() {
               {t('The Venue', 'El lugar')}
             </p>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl text-cream-50 drop-shadow-lg">
-              Autumn Ridge Estate
+              Wine Country Gardens
             </h2>
             <p className="mt-4 max-w-xl mx-auto text-cream-200/90 font-body text-base leading-relaxed">
               {t(
-                "Twelve acres of orchards and gardens in the heart of the Yakima Valley — where we'll exchange our vows beneath the autumn sky.",
-                'Doce acres de huertos y jardines en el corazón del Valle de Yakima, donde intercambiaremos votos bajo el cielo de otoño.',
+                "Nestled among the vineyards and orchards of the lower valley, Wine Country Gardens sets the stage for a night of good wine, celebration, and togetherness.",
+                'Enclavado entre los viñedos y huertos del valle bajo, Wine Country Gardens ofrece el escenario ideal para una noche de buen vino, celebración y convivencia.',
               )}
             </p>
           </Reveal>
@@ -93,12 +93,12 @@ export function Venue() {
           <Reveal>
             <div className="bg-cream-50 rounded-2xl p-7 sm:p-8 border border-cream-200 shadow-sm flex flex-col h-full">
               <h3 className="font-display text-2xl text-wine-700">
-                {t('Where We\'ll Say "I Do"', 'Donde diremos “sí, acepto”')}
+                {t('Where the celebration begins"', 'Donde comienza la celebración”')}
               </h3>
               <p className="mt-3 text-warmgray-500 font-body text-sm leading-relaxed">
                 {t(
-                  'Nestled among the apple orchards of the Yakima Valley, Autumn Ridge Estate offers a picture-perfect rustic setting for our autumn wedding. The ceremony will take place outdoors in the garden, followed by dinner and dancing in the restored barn.',
-                  'Entre los huertos de manzanas del Valle de Yakima, Autumn Ridge Estate ofrece un escenario rústico de postal para nuestra boda de otoño. La ceremonia será al aire libre, en el jardín, y después habrá cena y baile en el granero restaurado.',
+                  'A hidden gem among the vineyards of the Yakima Valley, Wine Country Gardens offers a picture-perfect rustic setting for our wedding. The ceremony will take place outdoors in the garden, followed by dinner and dancing in the pavillion.',
+                  'Una joya oculta entre los viñedos del valle de Yakima, Wine Country Gardens ofrece un entorno rústico de postal para nuestra boda. La ceremonia se celebrará al aire libre, en el jardín, seguida de la cena y el baile en el pabellón.',
                 )}
               </p>
 
@@ -173,8 +173,8 @@ export function Venue() {
             <p className="mt-4 text-sm text-warmgray-400 font-body flex items-center gap-1.5">
               <ExternalLink size={14} />{' '}
               {t(
-                'A detailed directions card will be included in your invitation.',
-                'Tu invitación incluirá una tarjeta con indicaciones detalladas.',
+                'For questions please email us here.',
+                'Si tiene preguntas, por favor envíenos un correo electrónico aquí..',
               )}
             </p>
           </div>

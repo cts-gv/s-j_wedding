@@ -13,6 +13,10 @@ const MY_PHOTO =
 
 ## Folder structure suggestions
 photos/hero/ — hero background and banner images
+
 photos/gallery/ — couple gallery photos
+
 photos/memory/ — photos for the "Loved Ones We Miss" section
+
 photos/venue/ — venue and travel-related images
+

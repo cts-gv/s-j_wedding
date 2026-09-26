@@ -7,7 +7,9 @@ Place your wedding photos in this folder. The couple can upload photos here manu
 Drop image files into this folder, then reference them in the site using this pattern:
 
 ```
-const MY_PHOTO = `${import.meta.env.BASE_URL}photos/your-image.jpg`;
+const MY_PHOTO =
+
+`${import.meta.env.BASE_URL}photos/your-image.jpg`;
 ```
 
 ## Folder structure suggestions

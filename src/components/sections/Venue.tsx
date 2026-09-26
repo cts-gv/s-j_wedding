@@ -93,7 +93,7 @@ export function Venue() {
           <Reveal>
             <div className="bg-cream-50 rounded-2xl p-7 sm:p-8 border border-cream-200 shadow-sm flex flex-col h-full">
               <h3 className="font-display text-2xl text-wine-700">
-                {t('Where the celebration begins"', 'Donde comienza la celebración”')}
+                {t('"Where the celebration begins"', '"Donde comienza la celebración”')}
               </h3>
               <p className="mt-3 text-warmgray-500 font-body text-sm leading-relaxed">
                 {t(

@@ -40,14 +40,14 @@ export function Story() {
             <div className="max-w-lg">
               <p className="text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">
                 {t(
-                  'It started with a misplaced scarf at a coffee shop in Brooklyn. He noticed it belonged to the woman at the next table and chased her down the block to return it. She thanked him, he asked for her name, and the rest is history.',
-                  'Todo comenzó con una bufanda olvidada en una cafetería de Brooklyn. Él notó que era de la mujer de la mesa de al lado y corrió tras ella por la cuadra para devolvérsela. Ella le dio las gracias, él le preguntó su nombre, y el resto es historia.',
+                  'They went to the same schools from middle school through high school, passing each other in the same hallways for years without really talking — maybe a word or two about a homework assignment, nothing more. He noticed her. She was the outgoing one, the popular one, impossible not to notice. He was quiet, shy, happy to admire from a safe distance. Whether she noticed him back is still up for debate.',
+                  'Fueron a las mismas escuelas desde la secundaria hasta la preparatoria, cruzándose por los mismos pasillos durante años sin realmente hablarse — quizás una que otra palabra sobre una tarea, nada más. Él la notó a ella. Ella era la extrovertida, la popular, imposible de no notar. Él era callado, tímido, feliz de admirarla desde una distancia prudente. Si ella lo notó a él también, sigue siendo un misterio.',
                 )}
               </p>
               <p className="mt-5 text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">
                 {t(
-                  'Two years of long walks, shared books, and weekend farmers markets turned into something neither of them could imagine living without. A trip to the Yakima Valley in peak foliage season sealed it — they knew this was where they would one day say “I do.”',
-                  'Dos años de largas caminatas, libros compartidos y mercados de productores los fines de semana se convirtieron en algo sin lo cual ninguno de los dos se imaginaba vivir. Un viaje al Valle de Yakima en plena temporada de follaje otoñal lo selló: supieron que aquí, algún día, dirían “sí, acepto”.',
+                  'Years later, their paths would still cross now and then — he\u2019d smile, and whether she noticed, well, jury\u2019s still out. Then one day, completely out of nowhere, he found the courage to ask her out for a drink. When she replied "sure," he read the text twice just to make sure he wasn\u2019t imagining it. Seven years after that first drink, they bought a home together. Three years later, she made it official with two simple words: "I do.”',
+                  'Años después, sus caminos aún se cruzaban de vez en cuando — él sonreía, y si ella se daba cuenta, bueno, eso sigue sin resolverse. Entonces, un día, de la nada, él reunió el valor para invitarla a tomar algo. Cuando ella respondió "claro", él leyó el mensaje dos veces solo para asegurarse de no estar imaginándolo. Siete años después de esa primera copa, compraron una casa juntos. Tres años más tarde, ella lo hizo oficial con dos simples palabras: "sí, acepto".',
                 )}
               </p>
             </div>

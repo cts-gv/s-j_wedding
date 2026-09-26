@@ -4,16 +4,14 @@ Place your wedding photos in this folder. The couple can upload photos here manu
 
 ## Usage
 
-Drop image files into this folder, then reference them in the site using the path `/photos/your-image.jpg`. For example:
+Drop image files into this folder, then reference them in the site using this pattern:
 
 ```
-<img src="/photos/hero.jpg" alt="..." />
+const MY_PHOTO = `${import.meta.env.BASE_URL}photos/your-image.jpg`;
 ```
 
 ## Folder structure suggestions
-
-- `photos/hero/` — hero background and banner images
-- `photos/gallery/` — couple gallery photos
-- `photos/party/` — wedding party member portraits
-- `photos/memory/` — photos for the "Loved Ones We Miss" section
-- `photos/venue/` — venue and travel-related images
+photos/hero/ — hero background and banner images
+photos/gallery/ — couple gallery photos
+photos/memory/ — photos for the "Loved Ones We Miss" section
+photos/venue/ — venue and travel-related images

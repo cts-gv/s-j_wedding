@@ -3,7 +3,7 @@ import { MapPin, Clock, Navigation, Car, ExternalLink } from 'lucide-react';
 import { useLanguage, L } from '@/i18n/LanguageContext';
 
 const VENUE_PHOTO =
-  '/public/photos/venue/wine-country-gardens.jpg';
+  `${import.meta.env.BASE_URL}photos/venue/wine-country-gardens.jpg`;
 
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const VENUE_DETAILS = [

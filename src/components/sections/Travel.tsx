@@ -1,54 +1,54 @@
 import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
-import { BedDouble, Plane, Car, MapPin, ExternalLink } from 'lucide-react';
+import { BedDouble, Wine, UtensilsCrossed, MapPin, ExternalLink } from 'lucide-react';
 import { useLanguage, L } from '@/i18n/LanguageContext';
 
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const LODGING = [
   {
-    name: 'The Grandview Inn',
+    name: 'Gård Estate Wines & Inn',
     detail: L(
-      'A rustic-chic inn 5 minutes from the venue. Rooms held under "Sunshine & Jose Wedding."',
-      'Una posada rústica y elegante a 5 minutos del lugar. Habitaciones reservadas a nombre de “Sunshine & Jose Wedding”.',
+      'A winery inn right in Prosser wine country, with rooms overlooking the Yakima River and a tasting room on site.',
+      'Una posada junto a una bodega en pleno Prosser wine country, con habitaciones frente al río Yakima y sala de cata en el lugar.',
     ),
-    distance: L('5 min drive', '5 min en auto'),
+    distance: L('In Prosser', 'En Prosser'),
+    price: '$$$',
+  },
+  {
+    name: 'Holiday Inn Express & Suites Prosser',
+    detail: L(
+      'A comfortable, modern hotel in the heart of Prosser with an indoor pool and free breakfast.',
+      'Un hotel moderno y cómodo en el corazón de Prosser, con alberca techada y desayuno incluido.',
+    ),
+    distance: L('In Prosser', 'En Prosser'),
     price: '$$',
   },
   {
-    name: 'Maple Grove Bed & Breakfast',
+    name: 'Best Western Plus Grapevine Inn',
     detail: L(
-      'A cozy Victorian B&B nestled among the autumn foliage. Limited rooms available.',
-      'Un acogedor bed & breakfast victoriano entre el follaje otoñal. Habitaciones limitadas.',
+      'A reliable, budget-friendly option in nearby Sunnyside, about 15 minutes from Prosser.',
+      'Una opción confiable y económica en la cercana Sunnyside, a unos 15 minutos de Prosser.',
     ),
-    distance: L('12 min drive', '12 min en auto'),
+    distance: L('~15 min drive', '~15 min en auto'),
     price: '$',
-  },
-  {
-    name: 'Riverside Hotel & Spa',
-    detail: L(
-      'A full-service hotel along the river with spa amenities for wedding prep.',
-      'Un hotel de servicio completo a orillas del río, con spa para prepararse para la boda.',
-    ),
-    distance: L('20 min drive', '20 min en auto'),
-    price: '$$$',
   },
 ];
 
-const GETTING_THERE = [
+const THINGS_TO_DO = [
   {
-    icon: Plane,
-    title: L('By Air', 'En avión'),
+    icon: Wine,
+    title: L('Wine Tasting in Prosser', 'Cata de vinos en Prosser'),
     detail: L(
-      'Seattle-Tacoma International (SEA) is the nearest major airport, about 2.5 hours from Grandview. Yakima Air Terminal is 45 minutes away for regional flights.',
-      'El Aeropuerto Internacional de Seattle-Tacoma (SEA) es el aeropuerto grande más cercano, a unas 2.5 horas de Grandview. La terminal aérea de Yakima está a 45 minutos y recibe vuelos regionales.',
+      "Known as the birthplace of Washington wine, Prosser is surrounded by more than 20 wineries. Spend an afternoon strolling Vintner's Village and sampling tasting rooms like Airfield Estates, Alexandria Nicole Cellars, Milbrandt Vineyards, and McKinley Springs.",
+      'Conocida como la cuna del vino de Washington, Prosser está rodeada de más de 20 bodegas. Pasa la tarde recorriendo Vintner\'s Village y probando vinos en lugares como Airfield Estates, Alexandria Nicole Cellars, Milbrandt Vineyards y McKinley Springs.',
     ),
   },
   {
-    icon: Car,
-    title: L('By Car', 'En auto'),
+    icon: UtensilsCrossed,
+    title: L('Food & Local Breweries', 'Comida y cervecerías locales'),
     detail: L(
-      'Grandview is a 2.5-hour drive southeast of Seattle via I-90 E and I-82 E. The venue is just off the highway with ample complimentary parking on site.',
-      'Grandview queda a 2.5 horas en auto al sureste de Seattle por la I-90 E y la I-82 E. El lugar está junto a la carretera y tiene amplio estacionamiento gratuito.',
+      "Prosser's downtown has plenty to offer beyond wine. Grab a pint at Whitstran Brewing Company, coffee and local beer at Brewminatti, or a hearty meal at the Horse Heaven Saloon. On Saturday mornings, the Prosser Farmers Market fills the park with fresh produce and treats.",
+      'El centro de Prosser ofrece mucho más que vino. Tómate una cerveza en Whitstran Brewing Company, un café o cerveza local en Brewminatti, o disfruta una buena comida en Horse Heaven Saloon. Los sábados por la mañana, el mercado de agricultores de Prosser llena el parque de productos frescos y delicias locales.',
     ),
   },
 ];
@@ -108,17 +108,17 @@ export function Travel() {
           </div>
         </Reveal>
 
-        {/* Getting around */}
+        {/* Things to do */}
         <Reveal delay={150}>
           <div className="mt-20">
             <div className="flex items-center gap-3 mb-6">
-              <Car className="text-wine-600" size={24} />
+              <Wine className="text-wine-600" size={24} />
               <h3 className="font-display text-2xl text-wine-700">
-                {t('Getting Around', 'Cómo moverse')}
+                {t('Things To Do', 'Qué hacer')}
               </h3>
             </div>
             <div className="grid md:grid-cols-2 gap-5">
-              {GETTING_THERE.map((item, i) => (
+              {THINGS_TO_DO.map((item, i) => (
                 <Reveal key={item.title.en} delay={i * 90}>
                   <div className="h-full bg-wine-700 rounded-2xl p-6 text-cream-50 shadow-md">
                     <div className="h-11 w-11 rounded-full bg-cream-50/10 flex items-center justify-center mb-4">

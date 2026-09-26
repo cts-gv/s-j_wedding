@@ -9,7 +9,7 @@ import { GuestWelcome } from '@/components/sections/GuestWelcome';
 import { Story } from '@/components/sections/Story';
 import { Gallery } from '@/components/sections/Gallery';
 import { InMemory } from '@/components/sections/InMemory';
-import { WeddingParty } from '@/components/sections/WeddingParty';
+import { DressCode } from '@/components/sections/DressCode';
 import { Venue } from '@/components/sections/Venue';
 import { Travel } from '@/components/sections/Travel';
 import { Rsvp } from '@/components/sections/Rsvp';
@@ -91,7 +91,7 @@ function AppContent() {
         <Story />
         <Gallery />
         <InMemory />
-        <WeddingParty />
+        <DressCode />
         <Venue />
         <Travel />
         <Rsvp />

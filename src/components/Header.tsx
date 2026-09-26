@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { href: '#story', label: L('Our Story', 'Historia'), full: L('Our Story', 'Nuestra historia') },
   { href: '#gallery', label: L('Gallery', 'Galería'), full: L('Gallery', 'Galería') },
   { href: '#memory', label: L('In Memory', 'Memoria'), full: L('In Memory', 'En memoria') },
-  { href: '#party', label: L('Wedding Party', 'Cortejo'), full: L('Wedding Party', 'Cortejo nupcial') },
+  { href: '#dress-code', label: L('Dress Code', 'Vestimenta'), full: L('Dress Code', 'Código de vestimenta') },
   { href: '#venue', label: L('Venue', 'Lugar'), full: L('Venue', 'Lugar') },
   { href: '#travel', label: L('Travel', 'Viaje'), full: L('Travel', 'Viaje y hospedaje') },
   { href: '#rsvp', label: L('RSVP', 'Confirmar'), full: L('RSVP', 'Confirmar asistencia') },

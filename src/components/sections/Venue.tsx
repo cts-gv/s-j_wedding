@@ -137,7 +137,7 @@ export function Venue() {
                   'Venue location map — Grandview, Washington',
                   'Mapa de la ubicación del lugar: Grandview, Washington',
                 )}
-                src="https://www.google.com/maps?q=Grandview,+Washington&output=embed"
+                src="https://maps.app.goo.gl/GjMthHxegfQrAQwG6output=embed"
                 className="w-full h-full min-h-[320px] border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

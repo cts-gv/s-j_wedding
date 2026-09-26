@@ -11,8 +11,8 @@ const VENUE_DETAILS = [
     icon: MapPin,
     label: L('Location', 'Ubicación'),
     value: L(
-      'Autumn Ridge Estate, 412 Orchard Lane, Grandview, WA',
-      'Autumn Ridge Estate, 412 Orchard Lane, Grandview, WA',
+      'Wine Country Gardens, 16302 N Bone Rd, Prosser, WA',
+      'Wine Country Gardens, 16302 N Bone Rd, Prosser, WA',
     ),
   },
   {
@@ -32,8 +32,9 @@ const DIRECTIONS = [
     icon: Car,
     title: L('From Seattle', 'Desde Seattle'),
     detail: L(
-      '2.5-hour drive southeast via I-90 E and I-82 E. Take exit 73 toward Grandview and follow Orchard Lane signs.',
-      '2.5 horas en auto hacia el sureste por la I-90 E y la I-82 E. Toma la salida 73 hacia Grandview y sigue los letreros de Orchard Lane.',
+      'Whether traveling from Seattle via I-90 East to I-82 East or coming directly from Yakima on I-82 East, take Exit 75 for McCreadie Road/County Line Road, turn right on McCreadie Road toward Grandview, turn left onto Wine Country Road/W County Road 12, and then turn right onto North Bone Road to reach Wine Country Gardens at 16302 North Bone Road.  There will be a sign at the entrance, "Wine Country Gardens".',
+      'Ya sea que viaje desde Seattle por la I-90 Este hacia la I-82 Este o que venga directamente desde Yakima por la I-82 Este, tome la salida 75 hacia McCreadie Road/County Line Road; gire a la derecha en McCreadie Road en dirección a Grandview, gire a la izquierda en Wine Country Road/W County Road 12 y luego gire a la derecha en North Bone Road para llegar a Wine Country Gardens, ubicado en el 16302 de North Bone Road. En la entrada encontrará un letrero que dice "Wine Country Gardens".
+',
     ),
   },
   {

@@ -8,8 +8,7 @@ Drop image files into this folder, then reference them in the site using this pa
 
 ```
 const MY_PHOTO =
-
-`${import.meta.env.BASE_URL}photos/your-image.jpg`;
+   `${import.meta.env.BASE_URL}photos/your-image.jpg`;
 ```
 
 ## Folder structure suggestions

@@ -32,7 +32,7 @@ export function DressCode() {
 
         <div className="mt-14 grid sm:grid-cols-2 gap-6">
           <Reveal>
-            <div className="h-full bg-cream-50 rounded-2xl p-7 sm:p-8 border border-cream-200 shadow-sm">
+            <div className="h-full bg-cream-100 rounded-2xl p-7 sm:p-8 border border-cream-200 shadow-sm">
               <div className="h-11 w-11 rounded-full bg-wine-50 flex items-center justify-center border border-wine-100">
                 <Shirt size={20} className="text-wine-600" />
               </div>

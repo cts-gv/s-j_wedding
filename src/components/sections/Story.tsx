@@ -41,7 +41,7 @@ export function Story() {
               <p className="text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">
                 {t(
                   'They went to the same schools from middle school through high school, passing each other in the same hallways for years without really talking — maybe a word or two about a homework assignment, nothing more. He noticed her. She was the outgoing one, the popular one, impossible not to notice. He was quiet, shy, happy to admire from a safe distance. Whether she noticed him back is still up for debate.',
-                  'Fueron a las mismas escuelas desde la secundaria hasta la preparatoria, cruzándose por los mismos pasillos durante años sin realmente hablarse — quizás una que otra palabra sobre una tarea, nada más. Él la notó a ella. Ella era la extrovertida, la popular, imposible de no notar. Él era callado, tímido, feliz de admirarla desde una distancia prudente. Si ella lo notó a él también, sigue siendo un misterio.',
+                  'Fueron a las mismas escuelas desde la secundaria hasta la preparatoria, cruzándo por los mismos pasillos durante años sin realmente hablarse — quizás una que otra palabra sobre una tarea, nada más. Él la notó a ella. Ella era la extrovertida, la popular, imposible de no notar. Él era callado, tímido, feliz de admirarla desde una distancia prudente. Si ella lo notó a él también, sigue siendo un misterio.',
                 )}
               </p>
               <p className="mt-5 text-warmgray-600 font-body leading-relaxed text-base sm:text-lg">

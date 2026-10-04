@@ -10,7 +10,7 @@ export function Hero() {
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src="hero1.jpg"
+          src="public/photos/hero/hero1.jpg"
           alt={t(
             'Couple sharing a kiss surrounded by autumn colors',
             'Pareja besándose rodeada de colores otoñales',

@@ -4,7 +4,7 @@ import { WEDDING_LOCATION } from '@/constants';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 // Works on GitHub Pages (sub-folder) and on a root domain.
-const HERO_IMAGE = `${import.meta.env.BASE_URL}photos/hero/hero1.jpg`;
+const HERO_IMAGE = `${import.meta.env.BASE_URL}photos/hero/hero3.jpg`;
 
 export function Hero() {
   const { t, weddingDate } = useLanguage();

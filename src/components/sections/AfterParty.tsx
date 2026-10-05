@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Loader2, Upload, Trash2, Camera, X, Clock, CheckCircle2 } from 'lucide-react';
+import { Loader2, Upload, Trash2, Camera, Clock, CheckCircle2 } from 'lucide-react';
 import { Reveal } from '@/components/Reveal';
 import { SectionTitle } from '@/components/SectionTitle';
+import { useLightbox, type LightboxItem } from '@/components/Lightbox';
 import { useAccess } from '@/context/AccessContext';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/lib/supabase';
@@ -16,7 +17,6 @@ export function AfterParty() {
   const [uploading, setUploading] = useState(false);
   const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lightbox, setLightbox] = useState<string | null>(null);
 
   const loadPhotos = useCallback(async () => {
     setLoading(true);
@@ -85,6 +85,14 @@ export function AfterParty() {
   const visiblePhotos = photos.filter(
     (p) => p.is_approved || p.guest_id === guest?.id,
   );
+
+  const lightboxItems: LightboxItem[] = visiblePhotos.map((p) => ({
+    id: p.id,
+    image: getUrl(p.storage_path),
+    title: p.caption || `${t('by', 'por')} ${p.uploader_name}`,
+  }));
+  const { lightbox, openAt } = useLightbox(lightboxItems);
+
   const pendingCount = photos.filter(
     (p) => !p.is_approved && p.guest_id === guest?.id,
   ).length;
@@ -173,7 +181,7 @@ export function AfterParty() {
                       className={`w-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105 ${
                         !photo.is_approved ? 'opacity-60' : ''
                       }`}
-                      onClick={() => setLightbox(getUrl(photo.storage_path))}
+                      onClick={() => openAt(i)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-warmgray-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
                       <p className="text-cream-50 font-body text-xs">{t('by', 'por')} {photo.uploader_name}</p>
@@ -211,26 +219,7 @@ export function AfterParty() {
         </div>
       </div>
 
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-[100] bg-warmgray-900/90 flex items-center justify-center p-6"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            className="absolute top-5 right-5 text-cream-100 hover:text-cream-50"
-            aria-label={t('Close', 'Cerrar')}
-          >
-            <X size={28} />
-          </button>
-          <img
-            src={lightbox}
-            alt={t('Enlarged photo', 'Foto ampliada')}
-            className="max-w-full max-h-full rounded-lg shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+      {lightbox}
     </section>
   );
 }

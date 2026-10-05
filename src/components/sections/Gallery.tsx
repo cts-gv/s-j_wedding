@@ -57,6 +57,16 @@ const COUPLE_PHOTOS: GalleryItem[] = [
     alt: L('Couple and a friend in Seahawks jerseys on a grassy hill', 'Pareja y una amiga con camisetas de los Seahawks en una colina de pasto'),
     caption: L('Go Hawks!', '¡Vamos Hawks!'),
   },
+  {
+    src: galleryPhoto('seattle-great-wheel.jpg'),
+    alt: L('Couple cuddled together in a Ferris wheel cabin above Seattle', 'Pareja abrazada en una cabina de la rueda de la fortuna sobre Seattle'),
+    caption: L('Up on the Great Wheel', 'En lo alto de la Gran Rueda'),
+  },
+  {
+    src: galleryPhoto('road-trip.jpg'),
+    alt: L('Couple on a road trip with coffee in the cup holders', 'Pareja en un viaje por carretera con café en los portavasos'),
+    caption: L('Road trip fuel', 'Combustible para el viaje'),
+  },
 ];
 
 export function Gallery() {

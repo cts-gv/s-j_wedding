@@ -3,8 +3,8 @@ import { Countdown } from '@/components/Countdown';
 import { WEDDING_LOCATION } from '@/constants';
 import { useLanguage } from '@/i18n/LanguageContext';
 
-// Works on GitHub Pages (sub-folder) and on a root domain.
-const HERO_IMAGE = `${import.meta.env.BASE_URL}photos/hero/hero2.jpg`;
+// Soft dark glow behind text so it stays readable over bright parts of the photo (e.g. the sunset).
+const TEXT_SHADOW = { textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 14px rgba(0,0,0,0.6)' };
 
 export function Hero() {
   const { t, weddingDate } = useLanguage();
@@ -13,7 +13,7 @@ export function Hero() {
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src={HERO_IMAGE}
+          src="hero1.jpg"
           alt={t(
             'Couple sharing a kiss surrounded by autumn colors',
             'Pareja besándose rodeada de colores otoñales',
@@ -36,8 +36,11 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 py-20 max-w-4xl">
-        <p className="text-gold-300 uppercase tracking-widest-2 text-sm font-body font-medium animate-fade-in">
-          {t("Come Celebrate Our Love and Marriage", 'Ven a Celebrar Nuestro amor y Nuestro Matrimonio')}
+        <p
+          className="text-gold-300 uppercase tracking-widest-2 text-sm font-body font-medium animate-fade-in"
+          style={TEXT_SHADOW}
+        >
+          {t('Join Us for the Beginning of Forever', 'Acompáñanos en el Comienzo de Nuestro Para Siempre')}
         </p>
         <h1 className="mt-6 font-display text-6xl sm:text-7xl md:text-8xl text-cream-50 font-medium leading-none animate-fade-up">
           Sunshine
@@ -79,7 +82,10 @@ export function Hero() {
           <Countdown />
         </div>
 
-        <p className="mt-10 text-cream-200/80 font-body text-sm italic animate-fade-in" style={{ animationDelay: '800ms' }}>
+        <p
+          className="mt-10 text-cream-50 font-body font-medium text-base sm:text-lg italic animate-fade-in"
+          style={{ ...TEXT_SHADOW, animationDelay: '800ms' }}
+        >
           {t(
             '"Love is the master key that opens the gates of happiness."',
             '"El amor es la llave maestra que abre las puertas de la felicidad."',

@@ -10,48 +10,52 @@ interface GalleryItem {
   span?: boolean;
 }
 
+// Makes the paths work whether the site lives at the root or in a sub-folder (e.g. GitHub Pages).
+const galleryPhoto = (file: string) => `${import.meta.env.BASE_URL}photos/gallery/${file}`;
+
+// Tip: keep `span: true` on the 1st and 6th photos so the grid has no gaps in the middle.
 const COUPLE_PHOTOS: GalleryItem[] = [
   {
-    src: 'https://images.pexels.com/photos/29205728/pexels-photo-29205728.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    alt: L('Couple walking through a vineyard in autumn', 'Pareja caminando por un viñedo en otoño'),
-    caption: L('The vineyard walk', 'El paseo por el viñedo'),
+    src: galleryPhoto('vineyard-sunset.jpg'),
+    alt: L('Couple sitting in wooden chairs watching the sunset over a vineyard', 'Pareja sentada en sillas de madera viendo el atardecer sobre un viñedo'),
+    caption: L('Sunset over the vines', 'Atardecer sobre los viñedos'),
     span: true,
   },
   {
-    src: 'https://images.pexels.com/photos/28981047/pexels-photo-28981047.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Wedding cake with floral arrangements', 'Pastel de bodas con arreglos florales'),
-    caption: L('Sweet beginnings', 'Dulces comienzos'),
+    src: galleryPhoto('vineyard.jpg'),
+    alt: L('Couple smiling at a vineyard at golden hour', 'Pareja sonriendo en un viñedo a la hora dorada'),
+    caption: L('Evening in the vineyard', 'Una tarde en el viñedo'),
   },
   {
-    src: 'https://images.pexels.com/photos/31412720/pexels-photo-31412720.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Bride and groom holding hands in a sunlit field', 'Novios tomados de la mano en un campo bañado de sol'),
-    caption: L('Golden hour', 'La hora dorada'),
+    src: galleryPhoto('maryhill-winery.jpg'),
+    alt: L('Couple in sunglasses enjoying rosé at Maryhill Winery', 'Pareja con gafas de sol disfrutando un rosado en Maryhill Winery'),
+    caption: L('Wine at Maryhill', 'Vino en Maryhill'),
   },
   {
-    src: 'https://images.pexels.com/photos/18800074/pexels-photo-18800074.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Couple by a rustic wooden windmill', 'Pareja junto a un molino de viento de madera'),
-    caption: L('Rustic charm', 'Encanto rústico'),
+    src: galleryPhoto('leavenworth.jpg'),
+    alt: L('Couple bundled up in Leavenworth at dusk', 'Pareja abrigada en Leavenworth al anochecer'),
+    caption: L('Leavenworth lights', 'Luces de Leavenworth'),
   },
   {
-    src: 'https://images.pexels.com/photos/9703891/pexels-photo-9703891.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    alt: L('Outdoor wedding reception with string lights at twilight', 'Recepción de boda al aire libre con guirnaldas de luces al anochecer'),
-    caption: L('Twilight celebration', 'Celebración al atardecer'),
+    src: galleryPhoto('ghost-hunting-portland.jpg'),
+    alt: L('Couple holding a ghost-hunting meter at night in Portland', 'Pareja con un medidor de cacería de fantasmas de noche en Portland'),
+    caption: L('Ghost hunting in Portland', 'Cacería de fantasmas en Portland'),
+  },
+  {
+    src: galleryPhoto('new-years-2017.jpg'),
+    alt: L('Couple holding hands from two hanging bubble chairs', 'Pareja tomada de la mano desde dos sillas colgantes transparentes'),
+    caption: L('Ringing in 2017', 'Recibiendo el 2017'),
     span: true,
   },
   {
-    src: 'https://images.pexels.com/photos/29205726/pexels-photo-29205726.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Couple enjoying a romantic moment in a vineyard', 'Pareja disfrutando un momento romántico en un viñedo'),
-    caption: L('Just the two of us', 'Solo los dos'),
+    src: galleryPhoto('baseball.jpg'),
+    alt: L('Couple in Mariners gear at a baseball game', 'Pareja con ropa de los Mariners en un juego de béisbol'),
+    caption: L('Take me out to the ballgame', 'Un día de béisbol'),
   },
   {
-    src: 'https://images.pexels.com/photos/27921846/pexels-photo-27921846.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Table setup with vibrant floral arrangements', 'Mesa decorada con vistosos arreglos florales'),
-    caption: L('The table is set', 'La mesa está puesta'),
-  },
-  {
-    src: 'https://images.pexels.com/photos/37179172/pexels-photo-37179172.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: L('Newlywed couple sharing a kiss by a farm fence', 'Recién casados besándose junto a una cerca de granja'),
-    caption: L('Forever starts now', 'El para siempre empieza hoy'),
+    src: galleryPhoto('seahawks.jpg'),
+    alt: L('Couple and a friend in Seahawks jerseys on a grassy hill', 'Pareja y una amiga con camisetas de los Seahawks en una colina de pasto'),
+    caption: L('Go Hawks!', '¡Vamos Hawks!'),
   },
 ];
 

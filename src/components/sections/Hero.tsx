@@ -3,6 +3,9 @@ import { Countdown } from '@/components/Countdown';
 import { WEDDING_LOCATION } from '@/constants';
 import { useLanguage } from '@/i18n/LanguageContext';
 
+// Works on GitHub Pages (sub-folder) and on a root domain.
+const HERO_IMAGE = `${import.meta.env.BASE_URL}photos/hero/hero2.jpg`;
+
 // Soft dark glow behind text so it stays readable over bright parts of the photo (e.g. the sunset).
 const TEXT_SHADOW = { textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 14px rgba(0,0,0,0.6)' };
 
@@ -13,7 +16,7 @@ export function Hero() {
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src="hero1.jpg"
+          src={HERO_IMAGE}
           alt={t(
             'Couple sharing a kiss surrounded by autumn colors',
             'Pareja besándose rodeada de colores otoñales',

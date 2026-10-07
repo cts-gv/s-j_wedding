@@ -3,7 +3,7 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 const COUPLE_PHOTO =
-  'https://images.pexels.com/photos/5910785/pexels-photo-5910785.jpeg?auto=compress&cs=tinysrgb&w=1200';
+  `${import.meta.env.BASE_URL}photos/story/then-and-now.jpg`;
 
 export function Story() {
   const { t } = useLanguage();
@@ -27,9 +27,9 @@ export function Story() {
               <img
                 src={COUPLE_PHOTO}
                 alt={t(
-                  'A couple sharing a warm moment over coffee',
-                  'Una pareja compartiendo un momento cálido con un café',
-                )}
+                'Middle school yearbook photos of the couple next to a recent photo of them together',
+                'Fotos de anuario de secundaria de la pareja junto a una foto reciente de ellos juntos',
+              )}
                 className="w-full h-full object-cover aspect-[4/3]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-warmgray-900/20 to-transparent" />

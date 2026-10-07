@@ -37,6 +37,7 @@ export function Rsvp() {
   const [maxAdults, setMaxAdults] = useState(guest?.max_adults ?? 1);
   const [maxChildren, setMaxChildren] = useState(guest?.max_children ?? 0);
   const [dietary, setDietary] = useState('');
+  const [songRequest, setSongRequest] = useState('');
   // Name of every adult / child coming under this access code (index 0 of
   // adultNames is assumed to be the person filling out the form, unless they
   // type something different).
@@ -86,6 +87,7 @@ export function Rsvp() {
       setAdults(finalAdults);
       setChildren(finalChildren);
       setDietary(r.dietary_notes ?? '');
+      setSongRequest(r.song_request ?? '');
 
       const { data: members } = await supabase
         .from('rsvp_guests')
@@ -151,6 +153,7 @@ export function Rsvp() {
       children: attendingCount ? children : 0,
       number_of_guests: attendingCount ? adults + children : 0,
       dietary_notes: dietary || null,
+      song_request: songRequest.trim() || null,
       updated_at: new Date().toISOString(),
     };
 
@@ -456,6 +459,20 @@ export function Rsvp() {
                         value={dietary}
                         onChange={(e) => setDietary(e.target.value)}
                         placeholder={t('e.g. gluten-free, nut allergy', 'p. ej. sin gluten, alergia a las nueces')}
+                        className={inputCls}
+                      />
+                    </FormField>
+
+                    <FormField label={t('Song request (optional)', 'Solicitud de canción (opcional)')}>
+                      <input
+                        type="text"
+                        maxLength={200}
+                        value={songRequest}
+                        onChange={(e) => setSongRequest(e.target.value)}
+                        placeholder={t(
+                          'A song that gets you on the dance floor (title and artist)',
+                          'Una canción que te haga bailar (título y artista)',
+                        )}
                         className={inputCls}
                       />
                     </FormField>

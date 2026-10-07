@@ -11,6 +11,8 @@ export interface Rsvp {
   adults: number;
   children: number;
   dietary_notes: string | null;
+  /** Optional song the guest would like played (asked on the RSVP form). */
+  song_request: string | null;
   message: string | null;
   created_at: string;
   updated_at: string;

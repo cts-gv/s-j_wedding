@@ -287,6 +287,12 @@
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--warmgray-600);
   }
+  label .hint {
+    text-transform: none; letter-spacing: 0;
+    font-weight: 400; font-size: .8rem;
+    color: var(--warmgray-500);
+    margin-left: .25rem;
+  }
   input[type="text"], input[type="tel"], input[type="email"] {
     width: 100%;
     min-height: 3rem;
@@ -420,12 +426,12 @@
           </div>
 
           <div class="field">
-            <label for="phone" data-i18n="label_phone">Phone number</label>
+            <label for="phone"><span data-i18n="label_phone">Phone number</span> <span class="hint" data-i18n="hint_phone">(so we can get a hold of you if needed)</span></label>
             <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required>
           </div>
 
           <div class="field">
-            <label for="email" data-i18n="label_email">Email</label>
+            <label for="email"><span data-i18n="label_email">Email</span> <span class="hint" data-i18n="hint_email">(this is where you'll receive your official invitation)</span></label>
             <input id="email" name="email" type="email" autocomplete="email" required>
           </div>
 
@@ -484,6 +490,10 @@
     label_name:  { en: "Name", es: "Nombre" },
     label_phone: { en: "Phone number", es: "Número de teléfono" },
     label_email: { en: "Email", es: "Correo electrónico" },
+    hint_phone:  { en: "(so we can get a hold of you if needed)",
+                   es: "(para poder comunicarnos contigo si es necesario)" },
+    hint_email:  { en: "(this is where you'll receive your official invitation)",
+                   es: "(aquí recibirás tu invitación oficial)" },
     send:        { en: "Send my details", es: "Enviar mis datos" },
     sending:     { en: "Sending…", es: "Enviando…" },
     fine:        { en: "Only we will see this. No spam, ever.", es: "Solo nosotros veremos esto. Nada de spam, nunca." },

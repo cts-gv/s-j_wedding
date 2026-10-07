@@ -7,6 +7,11 @@ import { supabase } from '@/lib/supabase';
 import type { Attending, GuestType, Rsvp, RsvpGuest } from '@/types';
 import { useLanguage } from '@/i18n/LanguageContext';
 
+/** Name used for a child when the family chooses not to share one. Stored in English so the guest list stays consistent. */
+const defaultChildName = (n: number) => `Child ${n}`;
+/** True for the auto-generated names ("Child 2" / "Niño 2"), so we can show them as blank when an RSVP is reopened. */
+const isDefaultChildName = (name: string) => /^(Child|Niño) \d+$/i.test(name.trim());
+
 /** Grow or shrink a list of names to `size`, keeping whatever was already typed. */
 function resizeNames(names: string[], size: number): string[] {
   if (size === names.length) return names;
@@ -89,7 +94,9 @@ export function Rsvp() {
         .order('sort_order', { ascending: true });
       const list = (members as RsvpGuest[] | null) ?? [];
       const loadedAdults = list.filter((m) => m.guest_type === 'adult').map((m) => m.full_name);
-      const loadedChildren = list.filter((m) => m.guest_type === 'child').map((m) => m.full_name);
+      const loadedChildren = list
+        .filter((m) => m.guest_type === 'child')
+        .map((m) => (isDefaultChildName(m.full_name) ? '' : m.full_name));
       setAdultNames(resizeNames(loadedAdults.length ? loadedAdults : [r.full_name], finalAdults));
       setChildNames(resizeNames(loadedChildren, finalChildren));
     } else {
@@ -126,10 +133,11 @@ export function Rsvp() {
     // The first adult defaults to the person filling out the form if they
     // left that slot blank.
     const finalAdultNames = adultNames.map((n, i) => (i === 0 && !n.trim() ? fullName : n.trim()));
-    const finalChildNames = childNames.map((n) => n.trim());
+    // Children's names are optional: blank ones become "Child 1", "Child 2", ...
+    const finalChildNames = childNames.map((n, i) => n.trim() || defaultChildName(i + 1));
 
-    if (attendingCount && (finalAdultNames.some((n) => !n) || finalChildNames.some((n) => !n))) {
-      setError(t('Please enter a name for every guest.', 'Por favor ingresa el nombre de cada invitado.'));
+    if (attendingCount && finalAdultNames.some((n) => !n)) {
+      setError(t('Please enter a name for every adult guest.', 'Por favor ingresa el nombre de cada adulto.'));
       setSubmitting(false);
       return;
     }
@@ -416,9 +424,8 @@ export function Rsvp() {
                               </span>
                               <input
                                 type="text"
-                                required
                                 value={name}
-                                placeholder={t('Full name', 'Nombre completo')}
+                                placeholder={t('Name (optional)', 'Nombre (opcional)')}
                                 onChange={(e) =>
                                   setChildNames((prev) => prev.map((n, idx) => (idx === i ? e.target.value : n)))
                                 }
@@ -426,6 +433,14 @@ export function Rsvp() {
                               />
                             </div>
                           ))}
+                          {childNames.length > 0 && (
+                            <p className="text-xs font-body text-warmgray-400 pl-[5.5rem]">
+                              {t(
+                                "Children's names are optional. If left blank, we'll list them as Child 1, Child 2, etc.",
+                                'Los nombres de los niños son opcionales. Si los dejas vacíos, los anotaremos como Niño 1, Niño 2, etc.',
+                              )}
+                            </p>
+                          )}
                         </div>
                       </FormField>
                     )}

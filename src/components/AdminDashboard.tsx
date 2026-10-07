@@ -270,6 +270,7 @@ function RsvpTable({ rsvps, rsvpGuests }: { rsvps: Rsvp[]; rsvpGuests: RsvpGuest
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Status</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500">Guests</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Dietary</th>
+            <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden md:table-cell">Song request</th>
             <th className="px-4 py-3 font-body text-xs uppercase tracking-wide text-warmgray-500 hidden lg:table-cell">Date</th>
           </tr>
         </thead>
@@ -280,7 +281,12 @@ function RsvpTable({ rsvps, rsvpGuests }: { rsvps: Rsvp[]; rsvpGuests: RsvpGuest
               .sort((a, b) => a.sort_order - b.sort_order);
             return (
               <tr key={rsvp.id} className="border-b border-cream-200 last:border-0 hover:bg-cream-100/40 transition-colors align-top">
-                <td className="px-4 py-3 font-body text-sm text-warmgray-800 font-medium">{rsvp.full_name}</td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-800 font-medium">
+                  {rsvp.full_name}
+                  {rsvp.song_request && (
+                    <div className="md:hidden mt-1 text-xs font-normal text-warmgray-500">♪ {rsvp.song_request}</div>
+                  )}
+                </td>
                 <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden sm:table-cell">{rsvp.email}</td>
                 <td className="px-4 py-3">
                   <StatusBadge status={rsvp.attending} />
@@ -307,6 +313,7 @@ function RsvpTable({ rsvps, rsvpGuests }: { rsvps: Rsvp[]; rsvpGuests: RsvpGuest
                   )}
                 </td>
                 <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.dietary_notes ?? '—'}</td>
+                <td className="px-4 py-3 font-body text-sm text-warmgray-500 hidden md:table-cell">{rsvp.song_request ?? '—'}</td>
                 <td className="px-4 py-3 font-body text-sm text-warmgray-400 hidden lg:table-cell">
                   {new Date(rsvp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </td>

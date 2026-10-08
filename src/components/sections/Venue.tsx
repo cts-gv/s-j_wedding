@@ -5,6 +5,8 @@ import { useLanguage, L } from '@/i18n/LanguageContext';
 const VENUE_PHOTO =
   `${import.meta.env.BASE_URL}photos/venue/wine-country-gardens.jpg`;
 
+const CONTACT_EMAIL = 'your-email@example.com'; // TODO: add your email
+
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const VENUE_DETAILS = [
   {
@@ -171,12 +173,30 @@ export function Venue() {
               ))}
             </div>
             <p className="mt-4 text-sm text-warmgray-400 font-body flex items-center gap-1.5">
-              <ExternalLink size={14} />{' '}
-              {t(
-                'For questions please email us here.',
-                'Si tiene preguntas, por favor envíenos un correo electrónico aquí..',
-              )}
-            </p>
+  <ExternalLink size={14} />{' '}
+  {t(
+    <>
+      For questions please email us{' '}
+      <a
+        href={`mailto:${CONTACT_EMAIL}`}
+        className="underline hover:text-warmgray-600"
+      >
+        here
+      </a>
+      .
+    </>,
+    <>
+      Si tiene preguntas, por favor envíenos un correo electrónico{' '}
+      <a
+        href={`mailto:${CONTACT_EMAIL}`}
+        className="underline hover:text-warmgray-600"
+      >
+        aquí
+      </a>
+      .
+    </>,
+  )}
+</p>
           </div>
         </Reveal>
       </div>

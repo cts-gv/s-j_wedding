@@ -3,6 +3,8 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { BedDouble, Wine, UtensilsCrossed, MapPin, ExternalLink } from 'lucide-react';
 import { useLanguage, L } from '@/i18n/LanguageContext';
 
+const CONTACT_EMAIL = 'your-email@example.com'; // TODO: add your email
+
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const LODGING = [
   {
@@ -99,12 +101,30 @@ export function Travel() {
               ))}
             </div>
             <p className="mt-4 text-sm text-warmgray-400 font-body flex items-center gap-1.5">
-              <ExternalLink size={14} />{' '}
-              {t(
-                'Mention our wedding when booking to receive the group rate.',
-                'Menciona nuestra boda al reservar para obtener la tarifa de grupo.',
-              )}
-            </p>
+  <ExternalLink size={14} />{' '}
+  {t(
+    <>
+      For questions please email us{' '}
+      <a
+        href={`mailto:${CONTACT_EMAIL}`}
+        className="underline hover:text-warmgray-600"
+      >
+        here
+      </a>
+      .
+    </>,
+    <>
+      Si tiene preguntas, por favor envíenos un correo electrónico{' '}
+      <a
+        href={`mailto:${CONTACT_EMAIL}`}
+        className="underline hover:text-warmgray-600"
+      >
+        aquí
+      </a>
+      .
+    </>,
+  )}
+</p>
           </div>
         </Reveal>
 

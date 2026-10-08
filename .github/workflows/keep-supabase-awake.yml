@@ -1,5 +1,8 @@
-# Sends a tiny request to each Supabase project once a day so the free plan
-# never sees 7 days of inactivity (which would pause the project).
+# Sends a small database WRITE to each Supabase project twice a day so the
+# free plan never sees 7 days of inactivity (which would pause the project).
+#
+# BEFORE THIS WORKS: run the keepalive SQL (table + keepalive_ping function)
+# once in the SQL Editor of EACH Supabase project. See the SQL at the bottom.
 #
 # The same file can live in BOTH repos. It needs no GitHub secrets: the URL and
 # key values below are the public "anon" keys that are already visible inside
@@ -8,7 +11,9 @@ name: Keep Supabase awake
 
 on:
   schedule:
-    - cron: '17 14 * * *'   # every day at 14:17 UTC
+    # Twice a day at off-peak minutes (04:43 and 16:43 UTC), because GitHub
+    # often delays scheduled runs at busy times like the top of the hour.
+    - cron: '43 4,16 * * *'
   workflow_dispatch:         # lets you run it by hand from the Actions tab
 
 jobs:
@@ -16,24 +21,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping the wedding website database
+        if: always()
         env:
           SUPABASE_URL: https://unxixhrmjhgnwqjelcli.supabase.co
           SUPABASE_KEY: sb_publishable_4SfIDiy61cFq8Qx2ZL2laQ_RTBnTZyy
         run: |
-          code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
-            "$SUPABASE_URL/rest/v1/special_notes?select=id&limit=1" \
-            -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY")
+          code=$(curl -sS --max-time 30 -o resp.txt -w '%{http_code}' \
+            -X POST "$SUPABASE_URL/rest/v1/rpc/keepalive_ping" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}')
           echo "Wedding website database answered: HTTP $code"
-          # Any answer below 500 means the project is awake and responding.
-          [ "$code" -ge 200 ] && [ "$code" -lt 500 ]
+          cat resp.txt
+          echo
+          [ "$code" -eq 200 ]
 
       - name: Ping the Save the Date database
+        if: always()
         env:
           SUPABASE_URL: https://irbvxortgcebuiztfkoc.supabase.co
           SUPABASE_KEY: sb_publishable_R6cVCubWSuhKa4fVgSziKg_9g_3LVAN
         run: |
-          code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
-            "$SUPABASE_URL/rest/v1/save_the_date_responses?select=names&limit=1" \
-            -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY")
+          code=$(curl -sS --max-time 30 -o resp.txt -w '%{http_code}' \
+            -X POST "$SUPABASE_URL/rest/v1/rpc/keepalive_ping" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}')
           echo "Save the Date database answered: HTTP $code"
-          [ "$code" -ge 200 ] && [ "$code" -lt 500 ]
+          cat resp.txt
+          echo
+          [ "$code" -eq 200 ]
+
+# ---------------------------------------------------------------------------
+# SQL to run once in each Supabase project (SQL Editor > New query > Run):
+#
+# create table if not exists public.keepalive (id int primary key, last_ping timestamptz);
+# insert into public.keepalive values (1, now()) on conflict (id) do nothing;
+# alter table public.keepalive enable row level security;
+#
+# create or replace function public.keepalive_ping()
+# returns timestamptz
+# language sql
+# security definer
+# set search_path = public
+# as $$
+#   update public.keepalive set last_ping = now() where id = 1
+#   returning last_ping;
+# $$;
+#
+# revoke all on function public.keepalive_ping() from public;
+# grant execute on function public.keepalive_ping() to anon;
+# ---------------------------------------------------------------------------

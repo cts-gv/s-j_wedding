@@ -572,7 +572,7 @@
           "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
           "Prefer": "return=minimal"
         },
-        body: JSON.stringify({ names, phone, email })
+        body: JSON.stringify({ names, phone, email, lang })
       });
       if (!res.ok) throw new Error("Request failed: " + res.status);
 

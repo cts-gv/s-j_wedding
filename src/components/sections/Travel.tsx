@@ -3,7 +3,7 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { BedDouble, Wine, UtensilsCrossed, MapPin, ExternalLink } from 'lucide-react';
 import { useLanguage, L } from '@/i18n/LanguageContext';
 
-const CONTACT_EMAIL = 'your-email@example.com'; // TODO: add your email
+const CONTACT_EMAIL = 'sunshineandjose77@gmail.com'; // TODO: add your email
 
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const LODGING = [
@@ -41,16 +41,16 @@ const THINGS_TO_DO = [
     icon: Wine,
     title: L('Wine Tasting in Prosser', 'Cata de vinos en Prosser'),
     detail: L(
-      "Known as the birthplace of Washington wine, Prosser is surrounded by more than 20 wineries. Spend an afternoon strolling Vintner's Village and sampling tasting rooms like Airfield Estates, Alexandria Nicole Cellars, Milbrandt Vineyards, and McKinley Springs.",
-      'Conocida como la cuna del vino de Washington, Prosser está rodeada de más de 20 bodegas. Pasa la tarde recorriendo Vintner\'s Village y probando vinos en lugares como Airfield Estates, Alexandria Nicole Cellars, Milbrandt Vineyards y McKinley Springs.',
+      "Known as the birthplace of Washington wine, Prosser is surrounded by more than 20 wineries. Spend an afternoon strolling Vintner's Village and sampling tasting rooms like Airfield Estates, Martinez & Martinez, and Wit Cellars. Make sure to visit our favorite, Hedges Family Estate, located in benton City.",
+      'Conocida como la cuna del vino de Washington, Prosser está rodeada de más de 20 bodegas. Pasa la tarde recorriendo Vintner\'s Village y probando vinos en lugares como Airfield Estates, Martinez & Martinez, y Wit Cellars. Asegúrate de visitar nuestro favorito, Hedges Family Estate, ubicado en Benton City.',
     ),
   },
   {
     icon: UtensilsCrossed,
     title: L('Food & Local Breweries', 'Comida y cervecerías locales'),
     detail: L(
-      "Prosser's downtown has plenty to offer beyond wine. Grab a pint at Whitstran Brewing Company, coffee and local beer at Brewminatti, or a hearty meal at the Horse Heaven Saloon. On Saturday mornings, the Prosser Farmers Market fills the park with fresh produce and treats.",
-      'El centro de Prosser ofrece mucho más que vino. Tómate una cerveza en Whitstran Brewing Company, un café o cerveza local en Brewminatti, o disfruta una buena comida en Horse Heaven Saloon. Los sábados por la mañana, el mercado de agricultores de Prosser llena el parque de productos frescos y delicias locales.',
+      "Prosser's downtown has plenty to offer beyond wine. Grab a meal at Whitstran Steak and Spirits, coffee and local beer at Brewminatti, or a have an Italian dinner at Maeves Italian Bistro. On Saturday mornings, the Prosser Farmers Market fills the park with fresh produce and treats.",
+   'El centro de Prosser ofrece mucho más que vino. Disfruta de una comida en Whitstran Steak and Spirits, toma un café y una cerveza local en Brewminatti o cena comida italiana en Maeves Italian Bistro. Los sábados por la mañana, el mercado de agricultores de Prosser (Prosser Farmers Market) llena el parque de productos frescos y delicias.',
     ),
   },
 ];

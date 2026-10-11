@@ -41,7 +41,7 @@ const THINGS_TO_DO = [
     icon: Wine,
     title: L('Wine Tasting in Prosser', 'Cata de vinos en Prosser'),
     detail: L(
-      "Known as the birthplace of Washington wine, Prosser is surrounded by more than 20 wineries. Spend an afternoon strolling Vintner's Village and sampling tasting rooms like Airfield Estates, Martinez & Martinez, and Wit Cellars. Make sure to visit our favorite, Hedges Family Estate, located in benton City.",
+      "Known as the birthplace of Washington wine, Prosser is surrounded by more than 20 wineries. Spend an afternoon strolling Vintner's Village and sampling tasting rooms like Airfield Estates, Martinez & Martinez, and Wit Cellars. Make sure to visit our favorite, Hedges Family Estate, located in Benton City.",
       'Conocida como la cuna del vino de Washington, Prosser está rodeada de más de 20 bodegas. Pasa la tarde recorriendo Vintner\'s Village y probando vinos en lugares como Airfield Estates, Martinez & Martinez, y Wit Cellars. Asegúrate de visitar nuestro favorito, Hedges Family Estate, ubicado en Benton City.',
     ),
   },

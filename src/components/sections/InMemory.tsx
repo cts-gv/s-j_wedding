@@ -19,20 +19,20 @@ interface LovedOne {
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const LOVED_ONES: LovedOne[] = [
   {
-    name: 'Margaret Hartwell',
-    relation: L("Sunshine's grandmother", 'Abuela de Sunshine'),
+    name: 'John Gomez',
+    relation: L("Sunshine's father", 'Padre de Sunshine'),
     note: L(
-      'Her wisdom and warmth shaped every part of who Sunshine is.',
+      'His wisdom and warmth shaped every part of who Sunshine is.',
       'Su sabiduría y su calidez formaron todo lo que Sunshine es.',
     ),
     photo: '',
   },
   {
-    name: 'Robert Cole Sr.',
-    relation: L("Jose's father", 'Padre de Jose'),
+    name: 'Josue (Joshua) Espinoza.',
+    relation: L("Jose's son", 'Hijo de Jose'),
     note: L(
-      'A gentleman, a teacher, and the best man Jose ever knew.',
-      'Un caballero, un maestro y el mejor hombre que Jose conoció.',
+      'Forever missed, forever loved, forever in our thoughts.',
+      'Siempre extrañado, siempre querido, siempre en nuestros pensamientos.',
     ),
     photo: '',
   },
@@ -46,8 +46,8 @@ const LOVED_ONES: LovedOne[] = [
     photo: '',
   },
   {
-    name: 'Jameson Cole',
-    relation: L("Jose's brother", 'Hermano de Jose'),
+    name: 'Natividad & Jose Alvarez',
+    relation: L("Jose's grandparents", 'Abuelos de Jose'),
     note: L(
       'Forever missed, forever loved, forever in our thoughts.',
       'Siempre extrañado, siempre querido, siempre en nuestros pensamientos.',

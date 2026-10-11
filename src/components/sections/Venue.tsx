@@ -5,7 +5,7 @@ import { useLanguage, L } from '@/i18n/LanguageContext';
 const VENUE_PHOTO =
   `${import.meta.env.BASE_URL}photos/venue/wine-country-gardens.jpg`;
 
-const CONTACT_EMAIL = 'your-email@example.com'; // TODO: add your email
+const CONTACT_EMAIL = 'sunshineandjose77@gmail.com'; // TODO: add your email
 
 // Each text is written twice: L('English', 'Español'). Edit both when you change a line.
 const VENUE_DETAILS = [

@@ -20,7 +20,7 @@ interface LovedOne {
 const LOVED_ONES: LovedOne[] = [
   {
     name: 'John Gomez',
-    relation: L("Sunshine's father", 'Padre de Sunshine'),
+    relation: L("Sunshine's dad", 'Padre de Sunshine'),
     note: L(
       'His wisdom and warmth shaped every part of who Sunshine is.',
       'Su sabiduría y su calidez formaron todo lo que Sunshine es.',

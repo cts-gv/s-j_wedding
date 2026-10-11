@@ -28,7 +28,7 @@ const LOVED_ONES: LovedOne[] = [
     photo: '',
   },
   {
-    name: 'Josue (Joshua) Espinoza.',
+    name: 'Josue (Joshua) Espinoza',
     relation: L("Jose's son", 'Hijo de Jose'),
     note: L(
       'Forever missed, forever loved, forever in our thoughts.',
